@@ -15,7 +15,7 @@ vector<vector<int>> GenerateRecomLists::generate_config(const vector<int>& field
     int father = 0;
     int father_index = 0;
     config_lists.push_back(feat_list_copy);
-
+    cout << config_lists.size() << endl;   
     while (feat_list_copy.size() > 0) {
         double max_ratio = 0.0;
         uint32_t ltoken_total_sum = 0, rtoken_total_sum = 0;
@@ -59,6 +59,7 @@ vector<vector<int>> GenerateRecomLists::generate_config(const vector<int>& field
             }
             config_lists.push_back(temp);
         }
+        feat_list_copy.erase(feat_list_copy.begin() + removed_field_index);
     }
 
     return config_lists;

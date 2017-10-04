@@ -7,7 +7,8 @@ setup(ext_modules = cythonize([
                                               "GenerateRecomLists.cpp",
                                               ],
               language="c++", libraries=["m"],
-              extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp", "-std=c++11", "-pthread"],
-              extra_link_args=['-fopenmp']),
+              #extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp", "-std=c++11", "-pthread"]),
+              extra_compile_args = ["-std=c++11"]),
+              #extra_link_args=['-fopenmp']),
 
  ]))
