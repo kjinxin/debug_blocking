@@ -1,16 +1,14 @@
 from libcpp.vector cimport vector
-from libcpp.unordered_set cimport unordered_set as cset
-from libcpp.unordered_map cimport unordered_map as cmap
+from libcpp.set cimport set as cset
+from libcpp.map cimport map as cmap
 from libcpp.queue cimport priority_queue as heap
 from libcpp.string cimport string
 from libcpp cimport bool
 from libc.stdio cimport printf, fprintf, fopen, fclose, FILE, sprintf
-from libc.stdint cimport uint32_t as uint, uint64_t
+#from libcpp.stdint cimport uint32_t as uint
 from cython.parallel import prange, parallel
 import time
-
-
-
+ctypedef unsigned int uint
 
 cdef extern from "GenerateRecomLists.h" nogil:
     cdef cppclass GenerateRecomLists:

@@ -9,7 +9,7 @@ GenerateRecomLists::~GenerateRecomLists() {}
 
 vector<vector<int>> GenerateRecomLists::generate_config(const vector<int>& field_list, const vector<int>& ltoken_sum_vector,
                            const vector<int>& rtoken_sum_vector, const double field_remove_ratio,
-                           const uint32_t ltable_size, const uint32_t rtable_size) {
+                           const unsigned int ltable_size, const unsigned int rtable_size) {
     vector<vector<int>> config_lists;
     vector<int> feat_list_copy = field_list;
     int father = 0;
@@ -18,7 +18,7 @@ vector<vector<int>> GenerateRecomLists::generate_config(const vector<int>& field
     cout << config_lists.size() << endl;   
     while (feat_list_copy.size() > 0) {
         double max_ratio = 0.0;
-        uint32_t ltoken_total_sum = 0, rtoken_total_sum = 0;
+        unsigned int ltoken_total_sum = 0, rtoken_total_sum = 0;
         int removed_field_index = -1;
         bool has_long_field = false;
 

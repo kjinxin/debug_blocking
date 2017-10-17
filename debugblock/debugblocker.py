@@ -646,9 +646,9 @@ if __name__ == "__main__":
      output_path = '../results/'
      lkey = 'id'
      rkey = 'id'
-     ltable = mg.read_csv_metadata('/home/jx/debugblocker/debug_blocking/datasets/Amazon-Google/tableA.csv', key=lkey)
-     rtable = mg.read_csv_metadata('/home/jx/debugblocker/debug_blocking/datasets/Amazon-Google/tableB.csv', key=rkey)
-     cand_set = mg.read_csv_metadata('/home/jx/debugblocker/debug_blocking/candidate_sets/Amazon-Google/overlap/title_overlap<3.csv',
+     ltable = mg.read_csv_metadata('../datasets/Amazon-Google/tableA.csv', key=lkey)
+     rtable = mg.read_csv_metadata('../datasets/Amazon-Google/tableB.csv', key=rkey)
+     cand_set = mg.read_csv_metadata('../candidate_sets/Amazon-Google/overlap/title_overlap3.csv',
                                     ltable=ltable, rtable=rtable, fk_ltable='ltable_' + lkey,
                                     fk_rtable='rtable_' + rkey, key='_id')
      output_size = 200
