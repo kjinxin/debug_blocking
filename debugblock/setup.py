@@ -10,8 +10,9 @@ from Cython.Build import cythonize
 
 setup(ext_modules = cythonize([
 
-    Extension("debugblocker_cython", sources=["debugblocker_cython.pyx",
-                                              "GenerateRecomLists.cpp",
+    Extension("debugblocker_cython", sources=["debugblocker_cython.pyx", "TopPair.cpp", "PrefixEvent.cpp",
+                                              "GenerateRecomLists.cpp", "TopkHeader.cpp",
+                                              "OriginalTopkPlain.cpp",
                                               ],
               language="c++"), 
               #extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp", "-std=c++11", "-pthread"]),

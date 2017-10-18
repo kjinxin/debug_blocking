@@ -3,31 +3,33 @@
 
 #include <vector>
 #include <string>
-//#include <unordered_map>
-//#include <unordered_set>
 #include<map>
 #include<set>
-//#include <queue>
 #include <iostream>
-//#include <thread>
-//#include <unistd.h>
 #include <stdio.h>
 
 using namespace std;
 
-typedef int myint;
-typedef map<int, set<int>> CandSet;
-typedef map<int, set<int>> CandSet;
-typedef vector<vector<int>> Table;
+typedef map<int, set<int> > CandSet;
+typedef vector<vector<int> > Table;
 
 double double_max(const double a, double b);
 
 class GenerateRecomLists {
 public:
 
-    vector<vector<int>> generate_config(const vector<int>& field_list, const vector<int>& ltoken_sum_vector,
+    Table generate_config(const vector<int>& field_list, const vector<int>& ltoken_sum_vector,
                               const vector<int>& rtoken_sum_vector, const double field_remove_ratio,
                               const unsigned int ltable_size, const unsigned int rtable_size);
+
+    void generate_recom_lists(Table& ltoken_vector, Table& rtoken_vector,
+                              Table& lindex_vector, Table& rindex_vector,
+                              Table& lfield_vector, Table& rfield_vector,
+                              vector<int>& ltoken_sum_vector, vector<int>& rtoken_sum_vector, vector<int>& field_list,
+                              CandSet& cand_set, unsigned int prefix_match_max_size, unsigned int rec_ave_len_thres,
+                              unsigned int offset_of_field_num, unsigned int max_field_num,
+                              unsigned int minimal_num_fields, double field_remove_ratio,
+                              unsigned int output_size);
 
     GenerateRecomLists();
     ~GenerateRecomLists();

@@ -5,7 +5,6 @@ from libcpp.queue cimport priority_queue as heap
 from libcpp.string cimport string
 from libcpp cimport bool
 from libc.stdio cimport printf, fprintf, fopen, fclose, FILE, sprintf
-#from libcpp.stdint cimport uint32_t as uint
 from cython.parallel import prange, parallel
 import time
 ctypedef unsigned int uint
@@ -14,7 +13,17 @@ cdef extern from "GenerateRecomLists.h" nogil:
     cdef cppclass GenerateRecomLists:
         GenerateRecomLists()
         vector[vector[int]]  generate_config(vector[int]& field_list, vector[int]& ltoken_sum_vector, 
-                              vector[int]& rtoken_sum_vector, double field_remove_ratio, int lvector_size, int rvector_size);
+                              vector[int]& rtoken_sum_vector, double field_remove_ratio, uint lvector_size, uint rvector_size)
+        
+        void generate_recom_lists(vector[vector[int]]& ltoken_vector, vector[vector[int]]& rtoken_vector,
+                              vector[vector[int]]& lindex_vector, vector[vector[int]]& rindex_vector,
+                              vector[vector[int]]& lfield_vector, vector[vector[int]]& rfield_vector,
+                              vector[int]& ltoken_sum_vector, vector[int]& rtoken_sum_vector, vector[int]& field_list,
+                              cmap[int, cset[int]]& cand_set, uint prefix_match_max_size, const uint rec_ave_len_thres,
+                              uint offset_of_field_num, uint max_field_num,
+                              uint minimal_num_fields, double field_remove_ratio,
+                              uint output_size);
+
 
 PREFIX_MATCH_MAX_SIZE = 5
 REC_AVE_LEN_THRES = 20
@@ -80,6 +89,12 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
         for j in xrange(config_vector[i].size()):
             printf("%d ", config_vector[i][j]);
         printf("\n");
+
+    generator.generate_recom_lists(ltoken_vector, rtoken_vector, lindex_vector, rindex_vector,
+                                   lfield_vector, rfield_vector, ltoken_sum, rtoken_sum, field_list,
+                                   cand_set, prefix_match_max_size, rec_ave_len_thres,
+                                   offset_of_field_num, max_field_num, minimal_num_fields, field_remove_ratio,
+                                   output_size)
 
 
 
