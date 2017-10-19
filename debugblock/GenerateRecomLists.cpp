@@ -1,5 +1,4 @@
 #include "GenerateRecomLists.h"
-#include "TopkHeader.h"
 GenerateRecomLists::GenerateRecomLists() {}
 
 
@@ -45,15 +44,19 @@ void GenerateRecomLists::generate_recom_lists(
       copy_table_and_remove_fields(config_lists[i], rtoken_vector, rindex_vector, new_rtoken_vector, new_rindex_vector);
       rec_lists[i] = original_topk_sim_join_plain(new_ltoken_vector, new_rtoken_vector, cand_set, output_size);
       Heap tmp = rec_lists[i];
-      cout << i << endl;
+      cout << i << ' ' << tmp.size() << endl;
       while(!tmp.empty()) {
-        cout << tmp.top().l_rec << ' ' << tmp.top().r_rec << ' ' << tmp.top().sim << endl;
+        //cout << tmp.top().l_rec << ' ' << tmp.top().r_rec << ' ' << tmp.top().sim << endl;
         tmp.pop();
       }
     }
 }
 
+vector<TopPair> GenerateRecomLists::merge_topk_lists(vector<Heap>& rec_lists) {
+  vector<TopPair> rec_list;
 
+  return rec_list;
+}
 
 Table GenerateRecomLists::generate_config(const vector<int>& field_list, const vector<int>& ltoken_sum_vector,
                            const vector<int>& rtoken_sum_vector, const double field_remove_ratio,

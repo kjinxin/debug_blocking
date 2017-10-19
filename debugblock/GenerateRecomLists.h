@@ -7,7 +7,7 @@
 #include<set>
 #include <iostream>
 #include <stdio.h>
-
+#include "TopkHeader.h"
 using namespace std;
 
 typedef map<int, set<int> > CandSet;
@@ -30,7 +30,7 @@ public:
                               unsigned int offset_of_field_num, unsigned int max_field_num,
                               unsigned int minimal_num_fields, double field_remove_ratio,
                               unsigned int output_size);
-
+    vector<TopPair> merge_topk_lists(vector<Heap>& rec_lists);
     GenerateRecomLists();
     ~GenerateRecomLists();
 };
