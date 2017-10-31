@@ -19,9 +19,7 @@ cdef extern from "GenerateRecomLists.h" nogil:
                               vector[vector[int]]& lindex_vector, vector[vector[int]]& rindex_vector,
                               vector[vector[int]]& lfield_vector, vector[vector[int]]& rfield_vector,
                               vector[int]& ltoken_sum_vector, vector[int]& rtoken_sum_vector, vector[int]& field_list,
-                              cmap[int, cset[int]]& cand_set, uint prefix_match_max_size, const uint rec_ave_len_thres,
-                              uint offset_of_field_num, uint max_field_num,
-                              uint minimal_num_fields, double field_remove_ratio,
+                              cmap[int, cset[int]]& cand_set, double field_remove_ratio,
                               uint output_size);
 
 
@@ -92,9 +90,7 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
 
     generator.generate_recom_lists(ltoken_vector, rtoken_vector, lindex_vector, rindex_vector,
                                    lfield_vector, rfield_vector, ltoken_sum, rtoken_sum, field_list,
-                                   cand_set, prefix_match_max_size, rec_ave_len_thres,
-                                   offset_of_field_num, max_field_num, minimal_num_fields, field_remove_ratio,
-                                   output_size)
+                                   cand_set, field_remove_ratio, output_size)
 
 
 

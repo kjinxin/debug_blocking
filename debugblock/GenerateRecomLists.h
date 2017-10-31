@@ -34,9 +34,7 @@ public:
                               Table& lindex_vector, Table& rindex_vector,
                               Table& lfield_vector, Table& rfield_vector,
                               vector<int>& ltoken_sum_vector, vector<int>& rtoken_sum_vector, vector<int>& field_list,
-                              CandSet& cand_set, unsigned int prefix_match_max_size, unsigned int rec_ave_len_thres,
-                              unsigned int offset_of_field_num, unsigned int max_field_num,
-                              unsigned int minimal_num_fields, double field_remove_ratio,
+                              CandSet& cand_set, double field_remove_ratio,
                               unsigned int output_size);
     vector<RecPair> merge_topk_lists(vector<Heap>& rec_lists);
     GenerateRecomLists();
