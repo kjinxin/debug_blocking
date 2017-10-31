@@ -24,7 +24,7 @@ def debug_blocker(ltable, rtable, candidate_set, output_path, activate_reusing_m
                   output_size=200, attr_corres=None, verbose=True):
     logging.info('\nstart blocking')
     total_start = time.time()
-    print 'start time:', total_start
+    # print 'start time:', total_start
     # preprocessing_start = time.clock()
     # Basic checks.
     if len(ltable) == 0:
@@ -36,7 +36,7 @@ def debug_blocker(ltable, rtable, candidate_set, output_path, activate_reusing_m
                             ' is less than or equal to 0. Nothing needs'
                             ' to be done!')
 
-    print 'cand set size:', len(candidate_set)
+    #print 'cand set size:', len(candidate_set)
 
     # get metadata
     l_key, r_key = cm.get_keys_for_ltable_rtable(ltable, rtable, logger, verbose)
@@ -60,68 +60,67 @@ def debug_blocker(ltable, rtable, candidate_set, output_path, activate_reusing_m
     # string types for document concatenation.
     filter_corres_list(ltable, rtable, l_key, r_key,
                        ltable_col_dict, rtable_col_dict, corres_list)
-    print corres_list
 
     # Get field filtered new table.
     ltable_filtered, rtable_filtered = get_filtered_table(
         ltable, rtable, corres_list)
-    print ltable_filtered.columns
-    print rtable_filtered.columns
 
+    # Select a subset of fields with high scores
     feature_list = select_features(ltable_filtered, rtable_filtered, l_key, r_key)
     feature_index_list = [feature_list[i][0] for i in range(len(feature_list))]
-    print feature_index_list
 
     if len(feature_list) == 0:
         raise StandardError('\nError: the selected field list is empty,'
                             ' nothing could be done! Please check if all'
                             ' table fields are numeric types.')
-    print 'selected_fields:', ltable_filtered.columns[feature_index_list]
-
+    # Map the record key value to its index in the table
     lrecord_id_to_index_map = build_id_to_index_map(ltable_filtered, l_key)
     rrecord_id_to_index_map = build_id_to_index_map(rtable_filtered, r_key)
-    print 'finish building id to index map'
 
+    # Map the record index to its key in the table
     lrecord_index_to_id_map = build_index_to_id_map(ltable_filtered, l_key)
     rrecord_index_to_id_map = build_index_to_id_map(rtable_filtered, r_key)
-    print 'finish building index to id map'
 
+    # Build the tokenized record list delimited by a white space on the
+    # selected fields.
     lrecord_list = get_tokenized_table(ltable_filtered, l_key, feature_index_list)
     rrecord_list = get_tokenized_table(rtable_filtered, r_key, feature_index_list)
-    print 'finish tokenizing tables'
 
+    
     order_dict, token_index_dict = build_global_token_order(
         lrecord_list, rrecord_list)
-    print 'finish building global order'
+    #print 'finish building global order'
 
     replace_token_with_numeric_index(lrecord_list, order_dict)
     replace_token_with_numeric_index(rrecord_list, order_dict)
-    print 'finish replacing tokens with numeric indices'
+    #print 'finish replacing tokens with numeric indices'
 
     sort_record_tokens_by_global_order(lrecord_list)
     sort_record_tokens_by_global_order(rrecord_list)
-    print 'finish sorting record tokens'
+    #print 'finish sorting record tokens'
 
     lrecord_token_list, lrecord_index_list, lrecord_field_list =\
                             split_record_token_and_index(lrecord_list, len(feature_list))
     rrecord_token_list, rrecord_index_list, rrecord_field_list =\
                             split_record_token_and_index(rrecord_list, len(feature_list))
-    print 'finish splitting record token and index'
+    #print 'finish splitting record token and index'
 
     del lrecord_list
     del rrecord_list
 
+    # Reformat the candidate set from a dataframe to a list of record index
+    # tuple pair.
     new_formatted_candidate_set = index_candidate_set(
         candidate_set, lrecord_id_to_index_map, rrecord_id_to_index_map, verbose)
-    print 'finish reformating cand set'
 
+    
     ltable_field_length_list = calc_table_field_length(lrecord_index_list, len(feature_list))
     rtable_field_length_list = calc_table_field_length(rrecord_index_list, len(feature_list))
 
     ltable_field_token_sum = calc_table_field_token_sum(ltable_field_length_list, len(feature_list))
     rtable_field_token_sum = calc_table_field_token_sum(rtable_field_length_list, len(feature_list))
-    print ltable_field_token_sum
-    print rtable_field_token_sum
+    #print ltable_field_token_sum
+    #print rtable_field_token_sum
 
     ltoken_sum = 0
     rtoken_sum = 0
@@ -131,7 +130,7 @@ def debug_blocker(ltable, rtable, candidate_set, output_path, activate_reusing_m
         rtoken_sum += rtable_field_token_sum[i]
     ltoken_ave = ltoken_sum * 1.0 / len(lrecord_token_list)
     rtoken_ave = rtoken_sum * 1.0 / len(rrecord_token_list)
-    print ltoken_ave, rtoken_ave
+    #print ltoken_ave, rtoken_ave
 
     ltoken_ratio = []
     rtoken_ratio = []
@@ -139,8 +138,8 @@ def debug_blocker(ltable, rtable, candidate_set, output_path, activate_reusing_m
         ltoken_ratio.append(ltable_field_token_sum[i] * 1.0 / ltoken_sum)
     for i in range(len(rtable_field_token_sum)):
         rtoken_ratio.append(rtable_field_token_sum[i] * 1.0 / rtoken_sum)
-    print ltoken_ratio
-    print rtoken_ratio
+    #print ltoken_ratio
+    #print rtoken_ratio
 
 
     debugblocker_cython(lrecord_token_list, rrecord_token_list,

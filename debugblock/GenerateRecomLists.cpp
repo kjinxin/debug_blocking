@@ -50,11 +50,57 @@ void GenerateRecomLists::generate_recom_lists(
         tmp.pop();
       }
     }
+    merge_topk_lists(rec_lists);
 }
 
-vector<TopPair> GenerateRecomLists::merge_topk_lists(vector<Heap>& rec_lists) {
-  vector<TopPair> rec_list;
+bool cmp(RecPair& lhs, RecPair& rhs) {
+  return lhs.rank < rhs.rank;
+}
 
+vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<Heap>& rec_lists) {
+  vector<RecPair> rec_list;
+  vector<map<pair<int, int>, int> > new_rec_lists;
+  set<pair<int, int> > full_set;
+  for (unsigned int i = 0; i < rec_lists.size(); i ++) {
+    map<pair<int, int>, int> tmp_map;
+    Heap tmp_heap = rec_lists[i];
+    int count = 0;
+    while(!tmp_heap.empty()) {
+      tmp_map[make_pair(tmp_heap.top().l_rec, tmp_heap.top().r_rec)] = ++ count;
+      full_set.insert(make_pair(tmp_heap.top().l_rec, tmp_heap.top().r_rec));
+      tmp_heap.pop();
+    }
+    cout << tmp_map.size() << endl;
+    new_rec_lists.push_back(tmp_map);
+  }
+  cout << full_set.size() << endl;
+  int list_size = new_rec_lists[0].size();
+  for (set<pair<int, int> >::iterator it = full_set.begin(); it != full_set.end(); it ++) {
+    cout << (*it).first << ' ' << (*it).second << endl;
+    vector<int> tmp;
+    for (unsigned int i = 0; i < new_rec_lists.size(); i ++) {
+      if (new_rec_lists[i].find(*it) == new_rec_lists[i].end()) {
+        cout << "This is good!" << endl;
+        tmp.push_back(list_size + 1);
+      } else {
+        tmp.push_back(new_rec_lists[i][*it]);
+      }
+    }
+    sort(tmp.begin(), tmp.end());
+    for (int i = 0; i < tmp.size(); i ++) {
+      cout << tmp[i] << ' ';
+    }
+    cout << endl;
+    if (tmp.size() & 1) {
+      rec_list.push_back(RecPair((*it).first, (*it).second, tmp[tmp.size() / 2]));
+    } else {
+      rec_list.push_back(RecPair((*it).first, (*it).second, (tmp[tmp.size() / 2 - 1] + tmp[tmp.size() / 2]) / 2));
+    }
+  }
+  sort(rec_list.begin(), rec_list.end(), cmp);
+  for (int i = 0; i < list_size; i ++) {
+    cout << i << ' ' << rec_list[i].l_rec << ' ' << rec_list[i].r_rec << ' ' << rec_list[i].rank << endl;
+  }
   return rec_list;
 }
 

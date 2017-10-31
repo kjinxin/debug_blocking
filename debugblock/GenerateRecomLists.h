@@ -3,9 +3,10 @@
 
 #include <vector>
 #include <string>
-#include<map>
-#include<set>
+#include <map>
+#include <set>
 #include <iostream>
+#include <algorithm>
 #include <stdio.h>
 #include "TopkHeader.h"
 using namespace std;
@@ -15,6 +16,13 @@ typedef vector<vector<int> > Table;
 
 double double_max(const double a, double b);
 
+class RecPair {
+public:
+  int l_rec, r_rec, rank;
+  RecPair(int l_rec, int r_rec, int rank) : l_rec(l_rec), r_rec(r_rec), rank(rank){
+
+  }
+};
 class GenerateRecomLists {
 public:
 
@@ -30,7 +38,7 @@ public:
                               unsigned int offset_of_field_num, unsigned int max_field_num,
                               unsigned int minimal_num_fields, double field_remove_ratio,
                               unsigned int output_size);
-    vector<TopPair> merge_topk_lists(vector<Heap>& rec_lists);
+    vector<RecPair> merge_topk_lists(vector<Heap>& rec_lists);
     GenerateRecomLists();
     ~GenerateRecomLists();
 };
