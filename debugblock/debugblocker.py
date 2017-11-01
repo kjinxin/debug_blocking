@@ -20,7 +20,7 @@ SELECTED_FIELDS_UPPER_BOUND = 8
 
 # Incorporate the reuse algorithm into this version.
 
-def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=None, verbose=True):
+def debug_blocker(ltable, rtable, candset, output_size=200, attr_corres=None, verbose=True):
     """
     This function debugs the blocker output and reports a list of potential
     matches that are discarded by a blocker (or a blocker sequence).
@@ -96,7 +96,7 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
                             ' is less than or equal to 0. Nothing needs'
                             ' to be done!')
 
-    #print 'cand set size:', len(candidate_set)
+    #print 'cand set size:', len(candset)
 
     # get metadata
     l_key, r_key = cm.get_keys_for_ltable_rtable(ltable, rtable, logger, verbose)
