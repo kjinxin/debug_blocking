@@ -12,7 +12,7 @@ double inline ori_absdiff(double a, double b) {
 
 void original_topk_sim_join_plain_impl(const Table& ltoken_vector, const Table& rtoken_vector,
                                        CandSet& cand_set, PrefixHeap& prefix_events,
-                                       Heap& topk_heap, const int output_size) {
+                                       Heap& topk_heap, const unsigned int output_size) {
     long int total_compared_pairs = 0;
     CandSet compared_set;
 
@@ -37,7 +37,7 @@ void original_topk_sim_join_plain_impl(const Table& ltoken_vector, const Table& 
             l_len = ltoken_vector[l_rec_idx].size();
             if (r_inverted_index.count(token)) {
                 set<pair<int, int> > r_records = r_inverted_index[token];
-//                for (auto r_rec_tuple : r_records) {
+
                 for (set<pair<int, int> >::iterator it = r_records.begin(); it != r_records.end(); ++it) {
                     pair<int, int> r_rec_tuple = *it;
                     r_rec_idx = r_rec_tuple.first;
@@ -155,13 +155,13 @@ void original_topk_sim_join_plain_impl(const Table& ltoken_vector, const Table& 
 
         }
     }
-    printf("number of compared pairs: %ld\n", total_compared_pairs);
+    //printf("number of compared pairs: %ld\n", total_compared_pairs);
 }
 
 
 Heap original_topk_sim_join_plain(const Table& ltoken_vector, const Table& rtoken_vector,
-                                  CandSet& cand_set, const int output_size) {
-    cout << "In original topk sim plain" << endl;
+                                  CandSet& cand_set, const unsigned int output_size) {
+    //cout << "In original topk sim plain" << endl;
 
     PrefixHeap prefix_events;
     original_generate_prefix_events(ltoken_vector, rtoken_vector, prefix_events);

@@ -21,7 +21,7 @@ typedef priority_queue<PrefixEvent> PrefixHeap;
 
 
 Heap original_topk_sim_join_plain(const Table& ltoken_vector, const Table& rtoken_vector,
-                                  CandSet& cand_set, const int output_size);
+                                  CandSet& cand_set, const unsigned int output_size);
 
 
 int original_plain_get_overlap(const vector<int>& ltoken_list, const vector<int>& rtoken_list);

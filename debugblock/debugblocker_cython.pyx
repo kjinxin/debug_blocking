@@ -85,29 +85,6 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
     return py_rec_list
 
 
-
-
-cdef void copy_table_and_remove_field(const vector[vector[int]]& table_vector,
-                                      const vector[vector[int]]& index_vector,
-                                      vector[vector[int]]& new_table_vector, int rm_field):
-    cdef uint i, j
-    for i in xrange(table_vector.size()):
-        new_table_vector.push_back(vector[int]())
-        for j in xrange(table_vector[i].size()):
-            if index_vector[i][j] != rm_field:
-                new_table_vector[i].push_back(table_vector[i][j])
-
-
-cdef void remove_field(vector[vector[int]]& table_vector,
-                       vector[vector[int]]& index_vector, int rm_field):
-    cdef uint i, j
-    for i in xrange(table_vector.size()):
-        for j in reversed(range(table_vector[i].size())):
-            if index_vector[i][j] == rm_field:
-                index_vector[i].erase(index_vector[i].begin() + j)
-                table_vector[i].erase(table_vector[i].begin() + j)
-
-
 cdef void convert_table_to_vector(table_list, vector[vector[int]]& table_vector):
     cdef int i, j
     for i in range(len(table_list)):

@@ -414,9 +414,7 @@ def select_features(ltable, rtable, lkey, rkey):
                             ' rtable schema!')
 
     lweight = get_feature_weight(ltable)
-    # logging.info('\nFinish calculate ltable feature weights.')
     rweight = get_feature_weight(rtable)
-    # logging.info('\nFinish calculate rtable feature weights.')
     if len(lweight) != len(rweight):
         raise StandardError('Error: ltable and rtable don\'t have the'
                             ' same schema')
@@ -439,12 +437,7 @@ def select_features(ltable, rtable, lkey, rkey):
     rank_list = sorted(rank_list, key=attrgetter('weight'), reverse=True)
     rank_index_list = []
     num_selected_fields = 0
-    # if len(rank_list) <= 3:
-    #     num_selected_fields = len(rank_list)
-    # elif len(rank_list) <= 5:
-    #     num_selected_fields = 3
-    # else:
-    #     num_selected_fields = len(rank_list) / 2
+
     if len(rank_list) < SELECTED_FIELDS_UPPER_BOUND:
         num_selected_fields = len(rank_list)
     else:
@@ -452,7 +445,7 @@ def select_features(ltable, rtable, lkey, rkey):
 
     for i in range(num_selected_fields):
         rank_index_list.append((rank_list[i].index, rank_list[i].weight))
-    # return sorted(rank_index_list, key=lambda x: x[0])
+
     return rank_index_list
 
 
