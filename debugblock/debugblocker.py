@@ -18,8 +18,6 @@ logger = logging.getLogger(__name__)
 SELECTED_FIELDS_UPPER_BOUND = 8
 
 
-# Incorporate the reuse algorithm into this version.
-
 def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=None, verbose=True):
     """
     This function debugs the blocker output and reports a list of potential
@@ -84,19 +82,19 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
                     attr_corres, verbose)
 
     total_start = time.time()
-    # print 'start time:', total_start
-    # preprocessing_start = time.clock()
+
     # Basic checks.
+    # Check table size.
     if len(ltable) == 0:
         raise AssertionError('Error: ltable is empty!')
     if len(rtable) == 0:
         raise AssertionError('Error: rtable is empty!')
+
+    # Check the value of output size.
     if output_size <= 0:
         raise AssertionError('The input parameter: \'pred_list_size\''
                             ' is less than or equal to 0. Nothing needs'
                             ' to be done!')
-
-    #print 'cand set size:', len(candidate_set)
 
     # get metadata
     l_key, r_key = cm.get_keys_for_ltable_rtable(ltable, rtable, logger, verbose)
@@ -107,99 +105,75 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
 
     # Check the user input field correst list (if exists) and get the raw
     # version of our internal correst list.
-    check_input_field_correspondence_list(ltable, rtable, attr_corres)
-    corres_list = get_field_correspondence_list(ltable, rtable,
+    _check_input_field_correspondence_list(ltable, rtable, attr_corres)
+    corres_list = _get_field_correspondence_list(ltable, rtable,
                                                 l_key, r_key, attr_corres)
 
     # Build the (col_name: col_index) dict to speed up locating a field in
     # the schema.
-    ltable_col_dict = build_col_name_index_dict(ltable)
-    rtable_col_dict = build_col_name_index_dict(rtable)
+    ltable_col_dict = _build_col_name_index_dict(ltable)
+    rtable_col_dict = _build_col_name_index_dict(rtable)
 
     # Filter correspondence list to remove numeric types. We only consider
     # string types for document concatenation.
-    filter_corres_list(ltable, rtable, l_key, r_key,
+    _filter_corres_list(ltable, rtable, l_key, r_key,
                        ltable_col_dict, rtable_col_dict, corres_list)
 
     # Get field filtered new table.
-    ltable_filtered, rtable_filtered = get_filtered_table(
+    ltable_filtered, rtable_filtered = _get_filtered_table(
         ltable, rtable, corres_list)
 
     # Select a subset of fields with high scores
-    feature_list = select_features(ltable_filtered, rtable_filtered, l_key, r_key)
+    feature_list = _select_features(ltable_filtered, rtable_filtered, l_key, r_key)
     feature_index_list = [feature_list[i][0] for i in range(len(feature_list))]
 
     if len(feature_list) == 0:
-        raise StandardError('\nError: the selected field list is empty,'
+        raise AssertionError('\nError: the selected field list is empty,'
                             ' nothing could be done! Please check if all'
                             ' table fields are numeric types.')
-    # Map the record key value to its index in the table
-    lrecord_id_to_index_map = build_id_to_index_map(ltable_filtered, l_key)
-    rrecord_id_to_index_map = build_id_to_index_map(rtable_filtered, r_key)
 
-    # Map the record index to its key in the table
-    lrecord_index_to_id_map = build_index_to_id_map(ltable_filtered, l_key)
-    rrecord_index_to_id_map = build_index_to_id_map(rtable_filtered, r_key)
+    # Map the record key value to its index in the table
+    lrecord_id_to_index_map = _build_id_to_index_map(ltable_filtered, l_key)
+    rrecord_id_to_index_map = _build_id_to_index_map(rtable_filtered, r_key)
 
     # Build the tokenized record list delimited by a white space on the
     # selected fields.
-    lrecord_list = get_tokenized_table(ltable_filtered, l_key, feature_index_list)
-    rrecord_list = get_tokenized_table(rtable_filtered, r_key, feature_index_list)
+    lrecord_list = _get_tokenized_table(ltable_filtered, l_key, feature_index_list)
+    rrecord_list = _get_tokenized_table(rtable_filtered, r_key, feature_index_list)
 
-    
-    order_dict, token_index_dict = build_global_token_order(
+    # Build the token order according to token's frequency. To run a
+    # prefix filtering based similarity join algorithm, we first need
+    # the global token order. 
+    order_dict, token_index_dict = _build_global_token_order(
         lrecord_list, rrecord_list)
-    #print 'finish building global order'
 
-    replace_token_with_numeric_index(lrecord_list, order_dict)
-    replace_token_with_numeric_index(rrecord_list, order_dict)
-    #print 'finish replacing tokens with numeric indices'
 
-    sort_record_tokens_by_global_order(lrecord_list)
-    sort_record_tokens_by_global_order(rrecord_list)
-    #print 'finish sorting record tokens'
+    # Sort the token in each record by the global order.
+    _replace_token_with_numeric_index(lrecord_list, order_dict)
+    _replace_token_with_numeric_index(rrecord_list, order_dict)
+
+    _sort_record_tokens_by_global_order(lrecord_list)
+    _sort_record_tokens_by_global_order(rrecord_list)
 
     lrecord_token_list, lrecord_index_list, lrecord_field_list =\
-                            split_record_token_and_index(lrecord_list, len(feature_list))
+                            _split_record_token_and_index(lrecord_list, len(feature_list))
     rrecord_token_list, rrecord_index_list, rrecord_field_list =\
-                            split_record_token_and_index(rrecord_list, len(feature_list))
-    #print 'finish splitting record token and index'
+                            _split_record_token_and_index(rrecord_list, len(feature_list))
 
     del lrecord_list
     del rrecord_list
 
     # Reformat the candidate set from a dataframe to a list of record index
     # tuple pair.
-    new_formatted_candidate_set = index_candidate_set(
+    new_formatted_candidate_set = _index_candidate_set(
         candidate_set, lrecord_id_to_index_map, rrecord_id_to_index_map, verbose)
 
     
-    ltable_field_length_list = calc_table_field_length(lrecord_index_list, len(feature_list))
-    rtable_field_length_list = calc_table_field_length(rrecord_index_list, len(feature_list))
+    ltable_field_length_list = _calc_table_field_length(lrecord_index_list, len(feature_list))
+    rtable_field_length_list = _calc_table_field_length(rrecord_index_list, len(feature_list))
 
-    ltable_field_token_sum = calc_table_field_token_sum(ltable_field_length_list, len(feature_list))
-    rtable_field_token_sum = calc_table_field_token_sum(rtable_field_length_list, len(feature_list))
-    #print ltable_field_token_sum
-    #print rtable_field_token_sum
-
-    ltoken_sum = 0
-    rtoken_sum = 0
-    for i in range(len(ltable_field_token_sum)):
-        ltoken_sum += ltable_field_token_sum[i]
-    for i in range(len(rtable_field_token_sum)):
-        rtoken_sum += rtable_field_token_sum[i]
-    ltoken_ave = ltoken_sum * 1.0 / len(lrecord_token_list)
-    rtoken_ave = rtoken_sum * 1.0 / len(rrecord_token_list)
-    #print ltoken_ave, rtoken_ave
-
-    ltoken_ratio = []
-    rtoken_ratio = []
-    for i in range(len(ltable_field_token_sum)):
-        ltoken_ratio.append(ltable_field_token_sum[i] * 1.0 / ltoken_sum)
-    for i in range(len(rtable_field_token_sum)):
-        rtoken_ratio.append(rtable_field_token_sum[i] * 1.0 / rtoken_sum)
-    #print ltoken_ratio
-    #print rtoken_ratio
+    ltable_field_token_sum = _calc_table_field_token_sum(ltable_field_length_list, len(feature_list))
+    rtable_field_token_sum = _calc_table_field_token_sum(rtable_field_length_list, len(feature_list))
 
 
     rec_list = debugblocker_cython(lrecord_token_list, rrecord_token_list,
@@ -247,7 +221,7 @@ def _validate_types(ltable, rtable, candidate_set, output_size,
         raise AssertionError('Parameter verbose is not of type bool')
 
 
-def calc_table_field_length(record_index_list, num_field):
+def _calc_table_field_length(record_index_list, num_field):
     table_field_length_list = []
     for i in range(len(record_index_list)):
         field_array = []
@@ -261,18 +235,8 @@ def calc_table_field_length(record_index_list, num_field):
     return table_field_length_list
 
 
-def calc_record_length(ltable_field_length_list, remained_fields):
-    record_length_list = []
-    for i in range(len(ltable_field_length_list)):
-        actual_length = 0
-        for field in remained_fields:
-            actual_length += ltable_field_length_list[i][field]
-        record_length_list.append(actual_length)
 
-    return record_length_list
-
-
-def calc_table_field_token_sum(table_field_length_list, num_field):
+def _calc_table_field_token_sum(table_field_length_list, num_field):
     table_field_token_sum = []
     for i in range(num_field):
         table_field_token_sum.append(0)
@@ -285,7 +249,7 @@ def calc_table_field_token_sum(table_field_length_list, num_field):
 
 
 
-def check_input_field_correspondence_list(ltable, rtable, field_corres_list):
+def _check_input_field_correspondence_list(ltable, rtable, field_corres_list):
     if field_corres_list is None:
         return
     true_ltable_fields = list(ltable.columns)
@@ -312,7 +276,7 @@ def check_input_field_correspondence_list(ltable, rtable, field_corres_list):
     return
 
 
-def get_field_correspondence_list(ltable, rtable, lkey, rkey, attr_corres):
+def _get_field_correspondence_list(ltable, rtable, lkey, rkey, attr_corres):
     corres_list = []
     if attr_corres is None or len(attr_corres) == 0:
         corres_list = mg.get_attr_corres(ltable, rtable)['corres']
@@ -331,7 +295,7 @@ def get_field_correspondence_list(ltable, rtable, lkey, rkey, attr_corres):
     return corres_list
 
 
-def filter_corres_list(ltable, rtable, ltable_key, rtable_key,
+def _filter_corres_list(ltable, rtable, ltable_key, rtable_key,
                        ltable_col_dict, rtable_col_dict, corres_list):
     ltable_dtypes = list(ltable.dtypes)
     rtable_dtypes = list(rtable.dtypes)
@@ -345,11 +309,13 @@ def filter_corres_list(ltable, rtable, ltable_key, rtable_key,
                 corres_list.pop(i)
 
     if len(corres_list) == 0:
-        raise StandardError('The field correspondence list is empty after'
+        raise AssertionError('The field correspondence list is empty after'
                             ' filtering: nothing could be done!')
 
 
-def get_filtered_table(ltable, rtable, corres_list):
+# Filter the original input tables according to the correspondence list.
+# The filtered tables will only contain the fields in the correspondence list.
+def _get_filtered_table(ltable, rtable, corres_list):
     ltable_cols = [col_pair[0] for col_pair in corres_list]
     rtable_cols = [col_pair[1] for col_pair in corres_list]
     lfiltered_table = ltable[ltable_cols]
@@ -357,7 +323,7 @@ def get_filtered_table(ltable, rtable, corres_list):
     return lfiltered_table, rfiltered_table
 
 
-def build_col_name_index_dict(table):
+def _build_col_name_index_dict(table):
     col_dict = {}
     col_names = list(table.columns)
     for i in range(len(col_names)):
@@ -365,31 +331,34 @@ def build_col_name_index_dict(table):
     return col_dict
 
 
-def select_features(ltable, rtable, lkey, rkey):
+# Select the most important fields for similarity join. The importance
+# of a fields is measured by the combination of field value uniqueness
+# and non-emptyness.
+def _select_features(ltable, rtable, lkey, rkey):
     lcolumns = list(ltable.columns)
     rcolumns = list(rtable.columns)
     lkey_index = -1
     rkey_index = -1
     if len(lcolumns) != len(rcolumns):
-        raise StandardError('Error: FILTERED ltable and FILTERED rtable'
+        raise AssertionError('Error: FILTERED ltable and FILTERED rtable'
                             ' have different number of fields!')
     for i in range(len(lcolumns)):
         if lkey == lcolumns[i]:
             lkey_index = i
     if lkey_index < 0:
-        raise StandardError('Error: cannot find key in the FILTERED'
+        raise AssertionError('Error: cannot find key in the FILTERED'
                             ' ltable schema!')
     for i in range(len(rcolumns)):
         if rkey == rcolumns[i]:
             rkey_index = i
     if rkey_index < 0:
-        raise StandardError('Error: cannot find key in the FILTERED'
+        raise AssertionError('Error: cannot find key in the FILTERED'
                             ' rtable schema!')
 
-    lweight = get_feature_weight(ltable)
-    rweight = get_feature_weight(rtable)
+    lweight = _get_feature_weight(ltable)
+    rweight = _get_feature_weight(rtable)
     if len(lweight) != len(rweight):
-        raise StandardError('Error: ltable and rtable don\'t have the'
+        raise AssertionError('Error: ltable and rtable don\'t have the'
                             ' same schema')
 
     Rank = namedtuple('Rank', ['index', 'weight'])
@@ -422,10 +391,11 @@ def select_features(ltable, rtable, lkey, rkey):
     return rank_index_list
 
 
-def get_feature_weight(table):
+# Calculate the importance (weight) for each field in a table.
+def _get_feature_weight(table):
     num_records = len(table)
     if num_records == 0:
-        raise StandardError('Error: empty table!')
+        raise AssertionError('Error: empty table!')
     weight = []
     for col in table.columns:
         value_set = set()
@@ -439,36 +409,37 @@ def get_feature_weight(table):
         if non_empty_count != 0:
             selectivity = len(value_set) * 1.0 / non_empty_count
         non_empty_ratio = non_empty_count * 1.0 / num_records
+
+
+        # The field weight is the combination of non-emptyness
+        # and uniqueness.
         weight.append(non_empty_ratio + selectivity)
     return weight
 
 
-def build_id_to_index_map(table, table_key):
+# Build the mapping of record key value and its index in the table.
+def _build_id_to_index_map(table, table_key):
     record_id_to_index = {}
     id_col = list(table[table_key])
     for i in range(len(id_col)):
         # id_col[i] = str(id_col[i])
         if id_col[i] in record_id_to_index:
-            raise Exception('record_id is already in record_id_to_index')
+            raise AssertionError('record_id is already in record_id_to_index')
         record_id_to_index[id_col[i]] = i
     return record_id_to_index
 
 
-def build_index_to_id_map(table, table_key):
-    record_index_to_id_map = {}
-    id_col = list(table[table_key])
-    for i in range(len(id_col)):
-        # id_col[i] = str(id_col[i])
-        record_index_to_id_map[i] = id_col[i]
-    return record_index_to_id_map
 
-
+# Tokenize a table. First tokenize each table column by a white space,
+# then concatenate the column of each record. The reason for tokenizing
+# columns first is that it's more efficient than iterate each dataframe
+# tuple.
 def get_tokenized_table(table, table_key, feature_list):
     record_list = []
     columns = table.columns[feature_list]
     tmp_table = []
     for col in columns:
-        column_token_list = get_tokenized_column(table[col])
+        column_token_list = _get_tokenized_column(table[col])
         tmp_table.append(column_token_list)
 
     num_records = len(table[table_key])
@@ -491,7 +462,8 @@ def get_tokenized_table(table, table_key, feature_list):
     return record_list
 
 
-def get_tokenized_column(column):
+# Tokenize each table column by white spaces.
+def _get_tokenized_column(column):
     column_token_list = []
     for value in list(column):
         tmp_value = replace_nan_to_empty(value)
@@ -513,15 +485,20 @@ def replace_nan_to_empty(field):
         # return field
 
 
-def index_candidate_set(candidate_set, lrecord_id_to_index_map, rrecord_id_to_index_map, verbose):
+# Reformat the input candidate set. Since the input format is DataFrame,
+# it's difficult for us to know if a tuple pair is in the candidate
+# set or not. We will use the reformatted candidate set in the topk
+# similarity join.
+def _index_candidate_set(candidate_set, lrecord_id_to_index_map, rrecord_id_to_index_map, verbose):
     if len(candidate_set) == 0:
         return {}
     new_formatted_candidate_set = {}
-    # # get metadata
+    
+    # Get metadata
     key, fk_ltable, fk_rtable, ltable, rtable, l_key, r_key = \
         cm.get_metadata_for_candset(candidate_set, logger, verbose)
 
-    # # validate metadata
+    # Validate metadata
     # cm._validate_metadata_for_candset(candidate_set, key, fk_ltable, fk_rtable, ltable, rtable, l_key, r_key,
     #                                  logger, verbose)
 
@@ -531,8 +508,6 @@ def index_candidate_set(candidate_set, lrecord_id_to_index_map, rrecord_id_to_in
     for i in range(len(ltable_key_data)):
         if ltable_key_data[i] in lrecord_id_to_index_map and \
                         rtable_key_data[i] in rrecord_id_to_index_map:
-            # new_formatted_candidate_set.add((lrecord_id_to_index_map[ltable_key_data[i]],
-            #                                 rrecord_id_to_index_map[rtable_key_data[i]]))
             l_key_data = lrecord_id_to_index_map[ltable_key_data[i]]
             r_key_data = rrecord_id_to_index_map[rtable_key_data[i]]
             if l_key_data in new_formatted_candidate_set:
@@ -543,7 +518,8 @@ def index_candidate_set(candidate_set, lrecord_id_to_index_map, rrecord_id_to_in
     return new_formatted_candidate_set
 
 
-def build_global_token_order(lrecord_list, rrecord_list):
+# Build the global order of tokens in the table by frequency.
+def _build_global_token_order(lrecord_list, rrecord_list):
     freq_order_dict = {}
     build_global_token_order_impl(lrecord_list, freq_order_dict)
     build_global_token_order_impl(rrecord_list, freq_order_dict)
@@ -561,7 +537,8 @@ def build_global_token_order(lrecord_list, rrecord_list):
     return order_dict, token_index_dict
 
 
-def build_global_token_order_impl(record_list, order_dict):
+# Implementation of building the global order of tokens in the table by frenqucy. 
+def _build_global_token_order_impl(record_list, order_dict):
     for record in record_list:
         for tup in record:
             token = tup[0]
@@ -571,7 +548,7 @@ def build_global_token_order_impl(record_list, order_dict):
                 order_dict[token] = 1
 
 
-def replace_token_with_numeric_index(record_list, order_dict):
+def _replace_token_with_numeric_index(record_list, order_dict):
     for i in range(len(record_list)):
         tmp_record = []
         for tup in record_list[i]:
@@ -581,13 +558,13 @@ def replace_token_with_numeric_index(record_list, order_dict):
                 tmp_record.append((order_dict[token], index))
         record_list[i] = tmp_record
 
-
-def sort_record_tokens_by_global_order(record_list):
+# Sort each tokenized record by the global token order.
+def _sort_record_tokens_by_global_order(record_list):
     for i in range(len(record_list)):
         record_list[i] = sorted(record_list[i], key=lambda x: x[0])
 
 
-def split_record_token_and_index(record_list, num_fields):
+def _split_record_token_and_index(record_list, num_fields):
     record_token_list = []
     record_index_list = []
     record_field_list = []
