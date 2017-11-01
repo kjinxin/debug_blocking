@@ -35,8 +35,6 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
                             ' is less than or equal to 0. Nothing needs'
                             ' to be done!')
 
-    #print 'cand set size:', len(candidate_set)
-
     # get metadata
     l_key, r_key = cm.get_keys_for_ltable_rtable(ltable, rtable, logger, verbose)
 
