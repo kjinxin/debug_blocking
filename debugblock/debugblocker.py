@@ -20,8 +20,7 @@ SELECTED_FIELDS_UPPER_BOUND = 8
 
 # Incorporate the reuse algorithm into this version.
 
-def debug_blocker(ltable, rtable, candidate_set, output_path, activate_reusing_module = False, use_new_topk = False, use_parallel = True,
-                  output_size=200, attr_corres=None, verbose=True):
+def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=None, verbose=True):
     logging.info('\nstart blocking')
     total_start = time.time()
     # print 'start time:', total_start
@@ -142,13 +141,15 @@ def debug_blocker(ltable, rtable, candidate_set, output_path, activate_reusing_m
     #print rtoken_ratio
 
 
-    debugblocker_cython(lrecord_token_list, rrecord_token_list,
+    rec_list = debugblocker_cython(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
                         lrecord_field_list, rrecord_field_list,
                         ltable_field_token_sum, rtable_field_token_sum,
-                        new_formatted_candidate_set, len(feature_list), output_size, output_path,
-                        activate_reusing_module, use_new_topk, use_parallel)
+                        new_formatted_candidate_set, len(feature_list), output_size)
 
+    print "rec list in python!"
+    for i in xrange(len(rec_list)):
+        print rec_list[i]
     total_end = time.time()
     total_time = total_end - total_start
     print 'total time:', total_time
@@ -651,5 +652,5 @@ if __name__ == "__main__":
                                     ltable=ltable, rtable=rtable, fk_ltable='ltable_' + lkey,
                                     fk_rtable='rtable_' + rkey, key='_id')
      output_size = 200
-     debug_blocker(ltable, rtable, cand_set, output_path)
+     debug_blocker(ltable, rtable, cand_set)
 

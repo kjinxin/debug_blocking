@@ -15,9 +15,5 @@ setup(ext_modules = cythonize([
                                               "OriginalTopkPlain.cpp",
                                               ],
               language="c++"), 
-              #extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp", "-std=c++11", "-pthread"]),
-              #extra_compile_args = ["-std=c++11"],
-			  #extra_link_args=["-std=c++11"]),
-              #extra_link_args=['-fopenmp']),
 
  ]))

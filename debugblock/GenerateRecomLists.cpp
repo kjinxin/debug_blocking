@@ -7,14 +7,14 @@ GenerateRecomLists::~GenerateRecomLists() {}
 void inline copy_table_and_remove_fields(const vector<int>& config, const Table& table_vector, const Table& index_vector,
                                          Table& new_table_vector, Table& new_index_vector) {
     set<int> field_set;
-    for (int i = 0; i < config.size(); i ++) {
+    for (unsigned int i = 0; i < config.size(); i ++) {
         field_set.insert(config[i]);
     }
 
-    for (int i = 0; i < table_vector.size(); ++i) {
+    for (unsigned int i = 0; i < table_vector.size(); ++i) {
         new_table_vector.push_back(vector<int> ());
         new_index_vector.push_back(vector<int> ());
-        for (int j = 0; j < table_vector[i].size(); ++j) {
+        for (unsigned int j = 0; j < table_vector[i].size(); ++j) {
             if (field_set.count(index_vector[i][j])) {
                 new_table_vector[i].push_back(table_vector[i][j]);
                 new_index_vector[i].push_back(table_vector[i][j]);
@@ -23,7 +23,7 @@ void inline copy_table_and_remove_fields(const vector<int>& config, const Table&
     }
 }
 
-void GenerateRecomLists::generate_recom_lists(
+vector<RecPair> GenerateRecomLists::generate_recom_lists(
                               Table& ltoken_vector, Table& rtoken_vector,
                               Table& lindex_vector, Table& rindex_vector,
                               Table& lfield_vector, Table& rfield_vector,
@@ -41,14 +41,9 @@ void GenerateRecomLists::generate_recom_lists(
       copy_table_and_remove_fields(config_lists[i], ltoken_vector, lindex_vector, new_ltoken_vector, new_lindex_vector);
       copy_table_and_remove_fields(config_lists[i], rtoken_vector, rindex_vector, new_rtoken_vector, new_rindex_vector);
       rec_lists[i] = original_topk_sim_join_plain(new_ltoken_vector, new_rtoken_vector, cand_set, output_size);
-      Heap tmp = rec_lists[i];
-      cout << i << ' ' << tmp.size() << endl;
-      while(!tmp.empty()) {
-        //cout << tmp.top().l_rec << ' ' << tmp.top().r_rec << ' ' << tmp.top().sim << endl;
-        tmp.pop();
-      }
     }
-    merge_topk_lists(rec_lists);
+    vector<RecPair> reclist = merge_topk_lists(rec_lists);
+    return reclist;
 }
 
 bool cmp(RecPair& lhs, RecPair& rhs) {
@@ -59,6 +54,8 @@ vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<Heap>& rec_lists) {
   vector<RecPair> rec_list;
   vector<map<pair<int, int>, int> > new_rec_lists;
   set<pair<int, int> > full_set;
+  
+  // Initialize the rankings for each topk recommendation list
   for (unsigned int i = 0; i < rec_lists.size(); i ++) {
     map<pair<int, int>, int> tmp_map;
     Heap tmp_heap = rec_lists[i];
@@ -68,27 +65,26 @@ vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<Heap>& rec_lists) {
       full_set.insert(make_pair(tmp_heap.top().l_rec, tmp_heap.top().r_rec));
       tmp_heap.pop();
     }
-    cout << tmp_map.size() << endl;
     new_rec_lists.push_back(tmp_map);
   }
-  cout << full_set.size() << endl;
   int list_size = new_rec_lists[0].size();
+
+  // Get the median of each topk recommendation
   for (set<pair<int, int> >::iterator it = full_set.begin(); it != full_set.end(); it ++) {
-    cout << (*it).first << ' ' << (*it).second << endl;
     vector<int> tmp;
+   
+    // for each topk recommendation, if it does not exists in the rec_list of certain config, then its rank
+    // under this config would be list_size + 1, otherwise use its original rank
     for (unsigned int i = 0; i < new_rec_lists.size(); i ++) {
       if (new_rec_lists[i].find(*it) == new_rec_lists[i].end()) {
-        cout << "This is good!" << endl;
         tmp.push_back(list_size + 1);
       } else {
         tmp.push_back(new_rec_lists[i][*it]);
       }
     }
+
+    // use the median of ranks in all the configs as the final rank
     sort(tmp.begin(), tmp.end());
-    for (int i = 0; i < tmp.size(); i ++) {
-      cout << tmp[i] << ' ';
-    }
-    cout << endl;
     if (tmp.size() & 1) {
       rec_list.push_back(RecPair((*it).first, (*it).second, tmp[tmp.size() / 2]));
     } else {
@@ -96,9 +92,6 @@ vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<Heap>& rec_lists) {
     }
   }
   sort(rec_list.begin(), rec_list.end(), cmp);
-  for (int i = 0; i < list_size; i ++) {
-    cout << i << ' ' << rec_list[i].l_rec << ' ' << rec_list[i].r_rec << ' ' << rec_list[i].rank << endl;
-  }
   return rec_list;
 }
 
@@ -107,17 +100,13 @@ Table GenerateRecomLists::generate_config(const vector<int>& field_list, const v
                            const unsigned int ltable_size, const unsigned int rtable_size) {
     Table config_lists;
     vector<int> feat_list_copy = field_list;
-    int father = 0;
-    int father_index = 0;
     config_lists.push_back(feat_list_copy);
-    cout << config_lists.size() << endl;   
     while (feat_list_copy.size() > 1) {
         double max_ratio = 0.0;
         unsigned int ltoken_total_sum = 0, rtoken_total_sum = 0;
         int removed_field_index = -1;
-        bool has_long_field = false;
 
-        for (int i = 0; i < feat_list_copy.size(); ++i) {
+        for (unsigned int i = 0; i < feat_list_copy.size(); ++i) {
             ltoken_total_sum += ltoken_sum_vector[feat_list_copy[i]];
             rtoken_total_sum += rtoken_sum_vector[feat_list_copy[i]];
         }
@@ -127,13 +116,12 @@ Table GenerateRecomLists::generate_config(const vector<int>& field_list, const v
         double ratio = 1 - (feat_list_copy.size() - 1) * field_remove_ratio / (1.0 + field_remove_ratio) *
                  double_max(lrec_ave_len, rrec_ave_len) / (lrec_ave_len + rrec_ave_len);
 
-        for (int i = 0; i < feat_list_copy.size(); ++i) {
+        for (unsigned int i = 0; i < feat_list_copy.size(); ++i) {
             max_ratio = double_max(max_ratio, double_max(ltoken_sum_vector[feat_list_copy[i]] * 1.0 / ltoken_total_sum,
                                                          rtoken_sum_vector[feat_list_copy[i]] * 1.0 / rtoken_total_sum));
             if (ltoken_sum_vector[feat_list_copy[i]] > ltoken_total_sum * ratio ||
                     rtoken_sum_vector[feat_list_copy[i]] > rtoken_total_sum * ratio) {
                 removed_field_index = i;
-                has_long_field = true;
                 break;
             }
         }
@@ -142,11 +130,7 @@ Table GenerateRecomLists::generate_config(const vector<int>& field_list, const v
             removed_field_index = feat_list_copy.size() - 1;
         }
 
-        //cout << "required remove-field ratio: " << ratio << endl;
-        //cout << "actual max ratio: " << max_ratio << endl;
-        //cout << "remove field " << feat_list_copy[removed_field_index] << endl;
-
-        for (int i = 0; i < feat_list_copy.size(); ++i) {
+        for (unsigned int i = 0; i < feat_list_copy.size(); ++i) {
             vector<int> temp = feat_list_copy;
             temp.erase(temp.begin() + i);
             if (temp.size() <= 0) {

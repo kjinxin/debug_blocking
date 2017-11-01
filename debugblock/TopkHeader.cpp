@@ -3,10 +3,10 @@
 
 void original_generate_prefix_events_impl(const Table& table, const int table_indicator,
                                           PrefixHeap& prefix_events) {
-    for (int i = 0; i < table.size(); ++i) {
+    for (unsigned int i = 0; i < table.size(); ++i) {
         unsigned long int length = table[i].size();
         if (length > 0) {
-            for (int j = 0; j < length; ++j) {
+            for (unsigned int j = 0; j < length; ++j) {
                 prefix_events.push(PrefixEvent(1.0 - j * 1.0 / length, table_indicator, i, j));
             }
         }
@@ -24,11 +24,11 @@ int original_plain_get_overlap(const vector<int>& ltoken_list, const vector<int>
     int overlap = 0;
     set<int> rset;
 
-    for (int i = 0; i < rtoken_list.size(); ++i) {
+    for (unsigned int i = 0; i < rtoken_list.size(); ++i) {
         rset.insert(rtoken_list[i]);
     }
 
-    for (int i = 0; i < ltoken_list.size(); ++i) {
+    for (unsigned int i = 0; i < ltoken_list.size(); ++i) {
         if (rset.count(ltoken_list[i])) {
             ++overlap;
         }

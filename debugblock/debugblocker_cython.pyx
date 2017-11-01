@@ -10,12 +10,17 @@ import time
 ctypedef unsigned int uint
 
 cdef extern from "GenerateRecomLists.h" nogil:
+    cdef cppclass RecPair:
+        RecPair()
+        RecPair(int, int, int)
+        int l_rec, r_rec, rank;
+
     cdef cppclass GenerateRecomLists:
         GenerateRecomLists()
         vector[vector[int]]  generate_config(vector[int]& field_list, vector[int]& ltoken_sum_vector, 
                               vector[int]& rtoken_sum_vector, double field_remove_ratio, uint lvector_size, uint rvector_size)
         
-        void generate_recom_lists(vector[vector[int]]& ltoken_vector, vector[vector[int]]& rtoken_vector,
+        vector[RecPair] generate_recom_lists(vector[vector[int]]& ltoken_vector, vector[vector[int]]& rtoken_vector,
                               vector[vector[int]]& lindex_vector, vector[vector[int]]& rindex_vector,
                               vector[vector[int]]& lfield_vector, vector[vector[int]]& rfield_vector,
                               vector[int]& ltoken_sum_vector, vector[int]& rtoken_sum_vector, vector[int]& field_list,
@@ -23,22 +28,13 @@ cdef extern from "GenerateRecomLists.h" nogil:
                               uint output_size);
 
 
-PREFIX_MATCH_MAX_SIZE = 5
-REC_AVE_LEN_THRES = 20
-OFFSET_OF_FIELD_NUM = 10
-MINIMAL_NUM_FIELDS = 0
 FIELD_REMOVE_RATIO = 0.1
 
 def debugblocker_cython(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
                         lrecord_field_list, rrecord_field_list,
                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
-                        py_num_fields, py_output_size, py_output_path, py_use_plain,
-                        py_use_new_topk, py_use_parallel):
-    cdef string output_path = py_output_path
-    cdef bool use_plain = py_use_plain
-    cdef bool use_new_topk = py_use_new_topk
-    cdef bool use_parallel = py_use_parallel
+                        py_num_fields, py_output_size):
 
     ### Convert py objs to c++ objs
     cdef vector[vector[int]] ltoken_vector, rtoken_vector
@@ -65,10 +61,6 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
         field_list.push_back(i)
 
     cdef uint output_size = py_output_size
-    cdef uint prefix_match_max_size = PREFIX_MATCH_MAX_SIZE
-    cdef uint rec_ave_len_thres = REC_AVE_LEN_THRES
-    cdef uint offset_of_field_num = OFFSET_OF_FIELD_NUM
-    cdef uint minimal_num_fields = MINIMAL_NUM_FIELDS
     cdef double field_remove_ratio = FIELD_REMOVE_RATIO
 
     del lrecord_token_list, rrecord_token_list
@@ -81,17 +73,16 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
 
     cdef GenerateRecomLists generator
 
-    cdef vector[vector[int]] config_vector
-    config_vector = generator.generate_config(field_list, ltoken_sum, rtoken_sum, field_remove_ratio, ltoken_vector.size(), rtoken_vector.size())
-    for i in xrange(config_vector.size()):
-        for j in xrange(config_vector[i].size()):
-            printf("%d ", config_vector[i][j]);
-        printf("\n");
-
-    generator.generate_recom_lists(ltoken_vector, rtoken_vector, lindex_vector, rindex_vector,
+    cdef vector[RecPair] rec_list;
+    rec_list = generator.generate_recom_lists(ltoken_vector, rtoken_vector, lindex_vector, rindex_vector,
                                    lfield_vector, rfield_vector, ltoken_sum, rtoken_sum, field_list,
                                    cand_set, field_remove_ratio, output_size)
 
+    py_rec_list = []
+    for i in xrange(rec_list.size()):
+        py_rec_list.append((rec_list[i].l_rec, rec_list[i].r_rec, rec_list[i].rank))
+    
+    return py_rec_list
 
 
 
@@ -139,6 +130,3 @@ cdef void convert_candidate_set_to_c_map(cand_set, cmap[int, cset[int]]& new_set
 cdef int convert_py_list_to_vector(py_list, vector[int]& vector):
     for value in py_list:
         vector.push_back(value)
-
-
-
