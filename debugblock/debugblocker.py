@@ -80,7 +80,7 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     """
     # logging.info('\nstart blocking')
     # Check input types.
-    _validate_types(ltable, rtable, candset, output_size,
+    _validate_types(ltable, rtable, candidate_set, output_size,
                     attr_corres, verbose)
 
     total_start = time.time()
