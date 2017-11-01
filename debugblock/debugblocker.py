@@ -12,6 +12,7 @@ import py_entitymatching as mg
 import py_entitymatching.catalog.catalog_manager as cm
 
 from debugblocker_cython import debugblocker_cython
+import py_entitymatching as em
 
 logger = logging.getLogger(__name__)
 
@@ -189,7 +190,8 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     total_time = total_end - total_start
     print 'total time:', total_time
 
-    ret_dataframe = _assemble_topk_table(rec_list[0:output_size], ltable_filtered, rtable_filtered)
+    ret_dataframe = _assemble_topk_table(rec_list[0:output_size], ltable_filtered, rtable_filtered, l_key, r_key)
+    print ret_dataframe
     return total_time
 
 # Validate the types of input parameters.
@@ -588,14 +590,12 @@ def _split_record_token_and_index(record_list, num_fields):
 
 
 # Assemble the topk heap to a dataframe.
-def _assemble_topk_table(rec_list, ltable, rtable, ret_key='_id',
+def _assemble_topk_table(rec_list, ltable, rtable, l_key, r_key, ret_key='_id',
                          l_output_prefix='ltable_', r_output_prefix='rtable_'):
     #rec_list.sort(key=lambda tup: tup[0], reverse=True)
     ret_data_col_name_list = ['_id', 'similarity']
     ltable_col_names = list(ltable.columns)
     rtable_col_names = list(rtable.columns)
-    lkey = em.get_key(ltable)
-    rkey = em.get_key(rtable)
     lkey_index = 0
     rkey_index = 0
     for i in range(len(ltable_col_names)):
@@ -638,8 +638,6 @@ def _assemble_topk_table(rec_list, ltable, rtable, ret_key='_id',
         return data_frame
 
     data_frame.columns = ret_data_col_name_list
-    lkey = em.get_key(ltable)
-    rkey = em.get_key(rtable)
     cm.set_candset_properties(data_frame, ret_key, l_output_prefix + lkey,
                               r_output_prefix + rkey, ltable, rtable)
 
