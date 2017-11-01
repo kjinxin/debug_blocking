@@ -80,7 +80,7 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
 
     py_rec_list = []
     for i in xrange(rec_list.size()):
-        py_rec_list.append((rec_list[i].l_rec, rec_list[i].r_rec, rec_list[i].rank))
+        py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
     
     return py_rec_list
 

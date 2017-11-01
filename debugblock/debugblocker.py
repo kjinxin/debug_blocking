@@ -434,7 +434,7 @@ def _build_id_to_index_map(table, table_key):
 # then concatenate the column of each record. The reason for tokenizing
 # columns first is that it's more efficient than iterate each dataframe
 # tuple.
-def get_tokenized_table(table, table_key, feature_list):
+def _get_tokenized_table(table, table_key, feature_list):
     record_list = []
     columns = table.columns[feature_list]
     tmp_table = []
@@ -466,7 +466,7 @@ def get_tokenized_table(table, table_key, feature_list):
 def _get_tokenized_column(column):
     column_token_list = []
     for value in list(column):
-        tmp_value = replace_nan_to_empty(value)
+        tmp_value = _replace_nan_to_empty(value)
         if tmp_value != '':
             tmp_list = list(tmp_value.lower().split(' '))
             column_token_list.append(tmp_list)
@@ -475,14 +475,15 @@ def _get_tokenized_column(column):
     return column_token_list
 
 
-def replace_nan_to_empty(field):
+# Check the value of each field. Replace nan with empty string
+# Cast floats into integers.
+def _replace_nan_to_empty(field):
     if pd.isnull(field):
         return ''
     elif type(field) in [float, numpy.float64, int, numpy.int64]:
         return str('{0:.0f}'.format(field))
     else:
         return str(field)
-        # return field
 
 
 # Reformat the input candidate set. Since the input format is DataFrame,
@@ -521,8 +522,8 @@ def _index_candidate_set(candidate_set, lrecord_id_to_index_map, rrecord_id_to_i
 # Build the global order of tokens in the table by frequency.
 def _build_global_token_order(lrecord_list, rrecord_list):
     freq_order_dict = {}
-    build_global_token_order_impl(lrecord_list, freq_order_dict)
-    build_global_token_order_impl(rrecord_list, freq_order_dict)
+    _build_global_token_order_impl(lrecord_list, freq_order_dict)
+    _build_global_token_order_impl(rrecord_list, freq_order_dict)
     token_list = []
     for token in freq_order_dict:
         token_list.append(token)
