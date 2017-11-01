@@ -189,6 +189,7 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     total_time = total_end - total_start
     print 'total time:', total_time
 
+    ret_dataframe = _assemble_topk_table(rec_list[0:output_size], ltable_filtered, rtable_filtered)
     return total_time
 
 # Validate the types of input parameters.
@@ -584,6 +585,65 @@ def _split_record_token_and_index(record_list, num_fields):
         record_field_list.append(array('I', field_list))
 
     return record_token_list, record_index_list, record_field_list
+
+
+# Assemble the topk heap to a dataframe.
+def _assemble_topk_table(rec_list, ltable, rtable, ret_key='_id',
+                         l_output_prefix='ltable_', r_output_prefix='rtable_'):
+    #rec_list.sort(key=lambda tup: tup[0], reverse=True)
+    ret_data_col_name_list = ['_id', 'similarity']
+    ltable_col_names = list(ltable.columns)
+    rtable_col_names = list(rtable.columns)
+    lkey = em.get_key(ltable)
+    rkey = em.get_key(rtable)
+    lkey_index = 0
+    rkey_index = 0
+    for i in range(len(ltable_col_names)):
+        if ltable_col_names[i] == lkey:
+            lkey_index = i
+
+    for i in range(len(rtable_col_names)):
+        if rtable_col_names[i] == rkey:
+            rkey_index = i
+
+    ret_data_col_name_list.append(l_output_prefix + lkey)
+    ret_data_col_name_list.append(r_output_prefix + rkey)
+    ltable_col_names.remove(lkey)
+    rtable_col_names.remove(rkey)
+
+    for i in range(len(ltable_col_names)):
+        ret_data_col_name_list.append(l_output_prefix + ltable_col_names[i])
+    for i in range(len(rtable_col_names)):
+        ret_data_col_name_list.append(r_output_prefix + rtable_col_names[i])
+
+    ret_tuple_list = []
+    for i in range(len(rec_list)):
+        tup = rec_list[i]
+        lrecord = list(ltable.ix[tup[1]])
+        rrecord = list(rtable.ix[tup[2]])
+        ret_tuple = [i, tup[0]]
+        ret_tuple.append(lrecord[lkey_index])
+        ret_tuple.append(rrecord[rkey_index])
+        for j in range(len(lrecord)):
+            if j != lkey_index:
+                ret_tuple.append(lrecord[j])
+        for j in range(len(rrecord)):
+            if j != rkey_index:
+                ret_tuple.append(rrecord[j])
+        ret_tuple_list.append(ret_tuple)
+
+    data_frame = pd.DataFrame(ret_tuple_list)
+    # When the ret data frame is empty, we cannot assign column names.
+    if len(data_frame) == 0:
+        return data_frame
+
+    data_frame.columns = ret_data_col_name_list
+    lkey = em.get_key(ltable)
+    rkey = em.get_key(rtable)
+    cm.set_candset_properties(data_frame, ret_key, l_output_prefix + lkey,
+                              r_output_prefix + rkey, ltable, rtable)
+
+    return data_frame
 
 
 if __name__ == "__main__":
