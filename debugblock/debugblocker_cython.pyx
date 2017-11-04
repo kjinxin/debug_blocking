@@ -22,7 +22,6 @@ cdef extern from "GenerateRecomLists.h" nogil:
         
         vector[RecPair] generate_recom_lists(vector[vector[int]]& ltoken_vector, vector[vector[int]]& rtoken_vector,
                               vector[vector[int]]& lindex_vector, vector[vector[int]]& rindex_vector,
-                              vector[vector[int]]& lfield_vector, vector[vector[int]]& rfield_vector,
                               vector[int]& ltoken_sum_vector, vector[int]& rtoken_sum_vector, vector[int]& field_list,
                               cmap[int, cset[int]]& cand_set, double field_remove_ratio,
                               uint output_size);
@@ -32,7 +31,6 @@ FIELD_REMOVE_RATIO = 0.1
 
 def debugblocker_cython(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
-                        lrecord_field_list, rrecord_field_list,
                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
                         py_num_fields, py_output_size):
 
@@ -44,10 +42,6 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
     cdef vector[vector[int]] lindex_vector, rindex_vector
     convert_table_to_vector(lrecord_index_list, lindex_vector)
     convert_table_to_vector(rrecord_index_list, rindex_vector)
-
-    cdef vector[vector[int]] lfield_vector, rfield_vector
-    convert_table_to_vector(lrecord_field_list, lfield_vector)
-    convert_table_to_vector(rrecord_field_list, rfield_vector)
 
     cdef vector[int] ltoken_sum, rtoken_sum
     convert_py_list_to_vector(ltable_field_token_sum, ltoken_sum)
@@ -65,7 +59,6 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
 
     del lrecord_token_list, rrecord_token_list
     del lrecord_index_list, rrecord_index_list
-    del lrecord_field_list, rrecord_field_list
     del py_cand_set
 
 
@@ -75,8 +68,7 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
 
     cdef vector[RecPair] rec_list;
     rec_list = generator.generate_recom_lists(ltoken_vector, rtoken_vector, lindex_vector, rindex_vector,
-                                   lfield_vector, rfield_vector, ltoken_sum, rtoken_sum, field_list,
-                                   cand_set, field_remove_ratio, output_size)
+                                   ltoken_sum, rtoken_sum, field_list, cand_set, field_remove_ratio, output_size)
 
     py_rec_list = []
     for i in xrange(rec_list.size()):

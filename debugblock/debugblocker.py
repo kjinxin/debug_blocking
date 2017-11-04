@@ -156,10 +156,10 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     _sort_record_tokens_by_global_order(lrecord_list)
     _sort_record_tokens_by_global_order(rrecord_list)
 
-    lrecord_token_list, lrecord_index_list, lrecord_field_list =\
-                            _split_record_token_and_index(lrecord_list, len(feature_list))
-    rrecord_token_list, rrecord_index_list, rrecord_field_list =\
-                            _split_record_token_and_index(rrecord_list, len(feature_list))
+    lrecord_token_list, lrecord_index_list =\
+                            _split_record_token_and_index(lrecord_list)
+    rrecord_token_list, rrecord_index_list =\
+                            _split_record_token_and_index(rrecord_list)
 
     del lrecord_list
     del rrecord_list
@@ -179,7 +179,6 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
 
     rec_list = debugblocker_cython(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
-                        lrecord_field_list, rrecord_field_list,
                         ltable_field_token_sum, rtable_field_token_sum,
                         new_formatted_candidate_set, len(feature_list), output_size)
 
@@ -568,25 +567,19 @@ def _sort_record_tokens_by_global_order(record_list):
         record_list[i] = sorted(record_list[i], key=lambda x: x[0])
 
 
-def _split_record_token_and_index(record_list, num_fields):
+def _split_record_token_and_index(record_list):
     record_token_list = []
     record_index_list = []
-    record_field_list = []
     for i in range(len(record_list)):
         token_list = []
         index_list = []
-        field_list = []
-        for j in range(num_fields):
-            field_list.append(0)
         for j in range(len(record_list[i])):
             token_list.append(record_list[i][j][0])
             index_list.append(record_list[i][j][1])
-            field_list[record_list[i][j][1]] += 1
         record_token_list.append(array('I', token_list))
         record_index_list.append(array('I', index_list))
-        record_field_list.append(array('I', field_list))
 
-    return record_token_list, record_index_list, record_field_list
+    return record_token_list, record_index_list
 
 
 # Assemble the topk heap to a dataframe.

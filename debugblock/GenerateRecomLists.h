@@ -32,7 +32,6 @@ public:
 
     vector<RecPair> generate_recom_lists(Table& ltoken_vector, Table& rtoken_vector,
                               Table& lindex_vector, Table& rindex_vector,
-                              Table& lfield_vector, Table& rfield_vector,
                               vector<int>& ltoken_sum_vector, vector<int>& rtoken_sum_vector, vector<int>& field_list,
                               CandSet& cand_set, double field_remove_ratio,
                               unsigned int output_size);
