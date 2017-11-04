@@ -62,6 +62,7 @@ vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<Heap>& rec_lists) {
     while(!tmp_heap.empty()) {
       tmp_map[make_pair(tmp_heap.top().l_rec, tmp_heap.top().r_rec)] = ++ count;
       full_set.insert(make_pair(tmp_heap.top().l_rec, tmp_heap.top().r_rec));
+      cout << tmp_heap.top().l_rec << ' ' << tmp_heap.top().r_rec << ' ' << count << endl;
       tmp_heap.pop();
     }
     new_rec_lists.push_back(tmp_map);

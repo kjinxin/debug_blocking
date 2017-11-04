@@ -190,7 +190,7 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     print 'total time:', total_time
 
     ret_dataframe = _assemble_topk_table(rec_list[0:output_size], ltable_filtered, rtable_filtered, l_key, r_key)
-    print ret_dataframe
+    #print ret_dataframe
     return total_time
 
 # Validate the types of input parameters.
