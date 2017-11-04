@@ -34,20 +34,20 @@ vector<RecPair> GenerateRecomLists::generate_recom_lists(
                            ltoken_vector.size(), rtoken_vector.size()); 
 
     int config_num = config_lists.size();
-    vector<TopkRankList > rec_lists(config_num);
+    vector<Heap> rec_lists(config_num);
     for (int i = 0; i < config_num; i ++) {
-      rec_lists[i] = generate_topk_with_config(config_lists[i], ltoken_vector, rtoken_vector, lindex_vector, 
-                                              rindex_vector, cand_set, output_size);
+      Table new_ltoken_vector, new_rtoken_vector, new_lindex_vector, new_rindex_vector;
+      copy_table_and_remove_fields(config_lists[i], ltoken_vector, lindex_vector, new_ltoken_vector, new_lindex_vector);
+      copy_table_and_remove_fields(config_lists[i], rtoken_vector, rindex_vector, new_rtoken_vector, new_rindex_vector);
+      rec_lists[i] = original_topk_sim_join_plain(new_ltoken_vector, new_rtoken_vector, cand_set, output_size);
     }
     vector<RecPair> reclist = merge_topk_lists(rec_lists);
     return reclist;
 }
 
-/*
- * Generate Topk list for given config.
- */
-TopkRankList GenerateRecomLists::generate_topk_with_config(
-                              vector<int>& config,
+
+TopkPairList GenerateRecomLists::generate_topk_with_config(
+                              vector<int>& config;
                               Table& ltoken_vector, Table& rtoken_vector,
                               Table& lindex_vector, Table& rindex_vector,
                               CandSet& cand_set, unsigned int output_size) {
@@ -57,10 +57,10 @@ TopkRankList GenerateRecomLists::generate_topk_with_config(
     copy_table_and_remove_fields(config, rtoken_vector, rindex_vector, new_rtoken_vector, new_rindex_vector);
     topkheap = original_topk_sim_join_plain(new_ltoken_vector, new_rtoken_vector, cand_set, output_size);
 
-    TopkRankList topkrank;
+    map<pair<int, int>, int> > topkrank;
     int count = 0;
     while(!topkheap.empty()) {
-      topkrank[make_pair(topkheap.top().l_rec, topkheap.top().r_rec)] = ++ count;
+      topkrank[make_pair(topk_heap.top().l_rec, topk_heap.top().r_rec)] = ++ count;
       topkheap.pop();
     }
     return topkrank;
@@ -70,18 +70,18 @@ bool cmp(RecPair& lhs, RecPair& rhs) {
   return lhs.rank < rhs.rank;
 }
 
-vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<TopkRankList >& rec_lists) {
+vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<map<pair<int, int>, int> >& rec_lists) {
   vector<RecPair> rec_list;
   set<pair<int, int> > full_set;
   
   // Initialize the rankings for each topk recommendation list
   for (unsigned int i = 0; i < rec_lists.size(); i ++) {
-    for (TopkRankList::iterator it = rec_lists[i].begin(); it != rec_lists[i].end(); it ++) {
+    for (map<pair<int, int>, int> >::iterator it = rec_lists[i].begin(); it != rec_lists.end(); it ++) {
       full_set.insert(make_pair(it->first.first, it->first.second));
       cout << it->first.first << ' ' << it->first.second << endl;
     }
   }
-  int list_size = rec_lists[0].size();
+  int list_size = new_rec_lists[0].size();
 
   // Get the median of each topk recommendation
   for (set<pair<int, int> >::iterator it = full_set.begin(); it != full_set.end(); it ++) {
@@ -89,11 +89,11 @@ vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<TopkRankList >& rec_
    
     // for each topk recommendation, if it does not exists in the rec_list of certain config, then its rank
     // under this config would be list_size + 1, otherwise use its original rank
-    for (unsigned int i = 0; i < rec_lists.size(); i ++) {
-      if (rec_lists[i].find(*it) == rec_lists[i].end()) {
+    for (unsigned int i = 0; i < new_rec_lists.size(); i ++) {
+      if (new_rec_lists[i].find(*it) == new_rec_lists[i].end()) {
         tmp.push_back(list_size + 1);
       } else {
-        tmp.push_back(rec_lists[i][*it]);
+        tmp.push_back(new_rec_lists[i][*it]);
       }
     }
 

@@ -13,6 +13,7 @@ using namespace std;
 
 typedef map<int, set<int> > CandSet;
 typedef vector<vector<int> > Table;
+typedef map<pair<int, int>, int> TopkRankList;
 
 double double_max(const double a, double b);
 
@@ -30,12 +31,17 @@ public:
                               const vector<int>& rtoken_sum_vector, const double field_remove_ratio,
                               const unsigned int ltable_size, const unsigned int rtable_size);
 
+    TopkRankList generate_topk_with_config(vector<int>& config, Table& ltoken_vector, Table& rtoken_vector,
+                                  Table& lindex_vector, Table& rindex_vector,
+                                  CandSet& cand_set, unsigned int output_size);
+
     vector<RecPair> generate_recom_lists(Table& ltoken_vector, Table& rtoken_vector,
                               Table& lindex_vector, Table& rindex_vector,
                               vector<int>& ltoken_sum_vector, vector<int>& rtoken_sum_vector, vector<int>& field_list,
                               CandSet& cand_set, double field_remove_ratio,
                               unsigned int output_size);
-    vector<RecPair> merge_topk_lists(vector<Heap>& rec_lists);
+
+    vector<RecPair> merge_topk_lists(vector<TopkRankList >& rec_lists);
     GenerateRecomLists();
     ~GenerateRecomLists();
 };

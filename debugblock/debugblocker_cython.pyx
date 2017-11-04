@@ -1,6 +1,7 @@
 from libcpp.vector cimport vector
 from libcpp.set cimport set as cset
 from libcpp.map cimport map as cmap
+from libcpp.pair cimport pair as cpair
 from libcpp.queue cimport priority_queue as heap
 from libcpp.string cimport string
 from libcpp cimport bool
@@ -17,8 +18,6 @@ cdef extern from "GenerateRecomLists.h" nogil:
 
     cdef cppclass GenerateRecomLists:
         GenerateRecomLists()
-        vector[vector[int]]  generate_config(vector[int]& field_list, vector[int]& ltoken_sum_vector, 
-                              vector[int]& rtoken_sum_vector, double field_remove_ratio, uint lvector_size, uint rvector_size)
         
         vector[RecPair] generate_recom_lists(vector[vector[int]]& ltoken_vector, vector[vector[int]]& rtoken_vector,
                               vector[vector[int]]& lindex_vector, vector[vector[int]]& rindex_vector,
@@ -26,6 +25,12 @@ cdef extern from "GenerateRecomLists.h" nogil:
                               cmap[int, cset[int]]& cand_set, double field_remove_ratio,
                               uint output_size);
 
+        vector[vector[int]]  generate_config(vector[int]& field_list, vector[int]& ltoken_sum_vector, 
+                              vector[int]& rtoken_sum_vector, double field_remove_ratio, uint lvector_size, uint rvector_size)
+
+        cmap[cpair[int, int], int] generate_topk_with_config(vector[int]& config, vector[vector[int]]& ltoken_vector, vector[vector[int]]& rtoken_vector,
+                              vector[vector[int]]& lindex_vector, vector[vector[int]]& rindex_vector,
+                              cmap[int, cset[int]]& cand_set, uint output_size);
 
 FIELD_REMOVE_RATIO = 0.1
 
