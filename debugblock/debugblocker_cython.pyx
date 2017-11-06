@@ -91,7 +91,6 @@ def debugblocker_cython_old(lrecord_token_list, rrecord_token_list,
                               lindex_vector, rindex_vector, cand_set,
                               output_size));
 
-    print rec_lists
     cdef vector[RecPair] rec_list;
         
     rec_list = generator.merge_topk_lists(rec_lists);
