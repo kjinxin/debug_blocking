@@ -179,13 +179,15 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     rtable_field_token_sum = _calc_table_field_token_sum(rtable_field_length_list, len(feature_list))
 
 
+    print('Calling Cython Parallel {0}'.format(time.time()))
     rec_list = debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
                         ltable_field_token_sum, rtable_field_token_sum,
                         new_formatted_candidate_set, len(feature_list), output_size)
+    print('Ending Cython Parallel {0}'.format(time.time()))
     print "rec list in python!"
-    for i in xrange(len(rec_list)):
-        print rec_list[i]
+    #for i in xrange(len(rec_list)):
+    #    print rec_list[i]
 
     total_end = time.time()
     total_time = total_end - total_start
@@ -198,9 +200,13 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
 def debugblocker_topk_cython_wrapper(config, lrecord_token_list, rrecord_token_list,
         lrecord_index_list, rrecord_index_list, py_cand_set,
         py_output_size):
-        return debugblocker_topk_cython(config, lrecord_token_list, rrecord_token_list,
+        
+        print('Trying {0}, time: {1}'.format(config, time.time()))
+        tmp = debugblocker_topk_cython(config, lrecord_token_list, rrecord_token_list,
         lrecord_index_list, rrecord_index_list, py_cand_set,
         py_output_size)
+        print('Done {0}, time: {1}'.format(config, time.time()))
+        return tmp
 
 def debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
@@ -212,11 +218,22 @@ def debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
                         py_cand_set, py_num_fields, len(lrecord_token_list), len(rrecord_token_list))
 
     # parallel computer topk based on config lists
-    rec_lists = Parallel(n_jobs = -1, verbose = 1, backend =
-            "threading")(delayed(debugblocker_topk_cython_wrapper)
-        (py_config_lists[i], lrecord_token_list, rrecord_token_list,
-        lrecord_index_list, rrecord_index_list, py_cand_set,
-        py_output_size) for i in xrange(len(py_config_lists)))
+    rec_lists = []
+    with Parallel(n_jobs=4) as parallel:
+        rec_lists = parallel(delayed(debugblocker_topk_cython_wrapper)
+            (py_config_lists[i], lrecord_token_list, rrecord_token_list,
+            lrecord_index_list, rrecord_index_list, py_cand_set,
+            py_output_size) for i in range(len(py_config_lists)))
+
+    #rec_lists = Parallel(n_jobs = 8)(delayed(debugblocker_topk_cython_wrapper)
+    #    (py_config_lists[i], lrecord_token_list, rrecord_token_list,
+    #    lrecord_index_list, rrecord_index_list, py_cand_set,
+    #    py_output_size) for i in range(len(py_config_lists)))
+    #for i in range(len(py_config_lists)):
+    #    tmp = debugblocker_topk_cython_wrapper(py_config_lists[i],
+    #            lrecord_token_list, rrecord_token_list, lrecord_index_list,
+    #            rrecord_index_list, py_cand_set, py_output_size)
+    #    rec_lists.append(tmp)
 
     py_rec_list = debugblocker_merge_topk_cython(rec_lists)
     
@@ -670,11 +687,11 @@ if __name__ == "__main__":
      output_path = '../results/'
      lkey = 'id'
      rkey = 'id'
-     ltable = mg.read_csv_metadata('../datasets/Amazon-Google/tableA.csv', key=lkey)
-     rtable = mg.read_csv_metadata('../datasets/Amazon-Google/tableB.csv', key=rkey)
-     cand_set = mg.read_csv_metadata('../candidate_sets/Amazon-Google/overlap/title_overlap3.csv',
+     ltable = mg.read_csv_metadata('../datasets/Walmart-Amazon/tableA.csv', key=lkey)
+     rtable = mg.read_csv_metadata('../datasets/Walmart-Amazon/tableB.csv', key=rkey)
+     cand_set = mg.read_csv_metadata('../datasets/Walmart-Amazon/title_overlap7.csv',
                                     ltable=ltable, rtable=rtable, fk_ltable='ltable_' + lkey,
-                                    fk_rtable='rtable_' + rkey, key='_id')
-     output_size = 200
-     debug_blocker(ltable, rtable, cand_set)
+                                        fk_rtable='rtable_' + rkey, key='_id')
+     output_size = 300
+     debug_blocker(ltable, rtable, cand_set, output_size)
 

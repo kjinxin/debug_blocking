@@ -186,6 +186,7 @@ def debugblocker_topk_cython(py_config, lrecord_token_list, rrecord_token_list,
     del lrecord_index_list, rrecord_index_list
     del py_cand_set
 
+    
 
     cdef GenerateRecomLists generator
 
@@ -193,10 +194,12 @@ def debugblocker_topk_cython(py_config, lrecord_token_list, rrecord_token_list,
     rec_list = generator.generate_topk_with_config(config, ltoken_vector, rtoken_vector,
                               lindex_vector, rindex_vector, cand_set, output_size);
    
+    print "cystart"
+    #time.sleep(500)
     py_rec_list = []
     for it in rec_list:
         py_rec_list.append([it.first.first, it.first.second, it.second])
-    
+    print "cyend"
     return py_rec_list
 
 def debugblocker_merge_topk_cython(py_rec_lists):

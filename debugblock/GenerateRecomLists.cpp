@@ -52,6 +52,11 @@ TopkRankList GenerateRecomLists::generate_topk_with_config(
                               Table& lindex_vector, Table& rindex_vector,
                               CandSet& cand_set, unsigned int output_size) {
     Heap topkheap;
+    cout << "start" << endl;
+    for (unsigned int i = 0; i < config.size(); i ++) {
+      cout << config[i] << ' ';
+    }
+    cout << endl;
     Table new_ltoken_vector, new_rtoken_vector, new_lindex_vector, new_rindex_vector;
     copy_table_and_remove_fields(config, ltoken_vector, lindex_vector, new_ltoken_vector, new_lindex_vector);
     copy_table_and_remove_fields(config, rtoken_vector, rindex_vector, new_rtoken_vector, new_rindex_vector);
@@ -60,10 +65,11 @@ TopkRankList GenerateRecomLists::generate_topk_with_config(
     TopkRankList topkrank;
     int count = 0;
     while(!topkheap.empty()) {
-      //cout << topkheap.top().l_rec << ' ' << topkheap.top().r_rec << ' ' << topkheap.top().sim << endl;
-      ttpkrank[make_pair(topkheap.top().l_rec, topkheap.top().r_rec)] = ++ count;
+      //cout << topkheap.top().l_rec << ' ' << topkheap.top().r_rec << ' ' << topkheap.top().sim << ' ' << count << endl;
+      topkrank[make_pair(topkheap.top().l_rec, topkheap.top().r_rec)] = ++ count;
       topkheap.pop();
     }
+    cout << "end" << endl;
     return topkrank;
 }
 
