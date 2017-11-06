@@ -60,6 +60,7 @@ TopkRankList GenerateRecomLists::generate_topk_with_config(
     TopkRankList topkrank;
     int count = 0;
     while(!topkheap.empty()) {
+      //cout << topkheap.top().l_rec << ' ' << topkheap.top().r_rec << ' ' << topkheap.top().sim << endl;
       topkrank[make_pair(topkheap.top().l_rec, topkheap.top().r_rec)] = ++ count;
       topkheap.pop();
     }
@@ -78,7 +79,6 @@ vector<RecPair> GenerateRecomLists::merge_topk_lists(vector<TopkRankList >& rec_
   for (unsigned int i = 0; i < rec_lists.size(); i ++) {
     for (TopkRankList::iterator it = rec_lists[i].begin(); it != rec_lists[i].end(); it ++) {
       full_set.insert(make_pair(it->first.first, it->first.second));
-      cout << it->first.first << ' ' << it->first.second << endl;
     }
   }
   int list_size = rec_lists[0].size();

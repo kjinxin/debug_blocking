@@ -11,7 +11,9 @@ from py_entitymatching.utils.validation_helper import validate_object_type
 import py_entitymatching as mg
 import py_entitymatching.catalog.catalog_manager as cm
 
-from debugblocker_cython import debugblocker_cython
+from debugblocker_cython import debugblocker_cython, debugblocker_config_cython, debugblocker_topk_cython, debugblocker_merge_topk_cython
+
+from joblib import Parallel, delayed
 import py_entitymatching as em
 
 logger = logging.getLogger(__name__)
@@ -177,14 +179,14 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     rtable_field_token_sum = _calc_table_field_token_sum(rtable_field_length_list, len(feature_list))
 
 
-    rec_list = debugblocker_cython(lrecord_token_list, rrecord_token_list,
+    rec_list = debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
                         ltable_field_token_sum, rtable_field_token_sum,
                         new_formatted_candidate_set, len(feature_list), output_size)
-
     print "rec list in python!"
     for i in xrange(len(rec_list)):
         print rec_list[i]
+
     total_end = time.time()
     total_time = total_end - total_start
     print 'total time:', total_time
@@ -192,6 +194,33 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     ret_dataframe = _assemble_topk_table(rec_list[0:output_size], ltable_filtered, rtable_filtered, l_key, r_key)
     #print ret_dataframe
     return total_time
+
+def debugblocker_topk_cython_wrapper(config, lrecord_token_list, rrecord_token_list,
+        lrecord_index_list, rrecord_index_list, py_cand_set,
+        py_output_size):
+        return debugblocker_topk_cython(config, lrecord_token_list, rrecord_token_list,
+        lrecord_index_list, rrecord_index_list, py_cand_set,
+        py_output_size)
+
+def debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
+                        lrecord_index_list, rrecord_index_list,
+                        ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
+                        py_num_fields, py_output_size):
+
+    # generate config lists
+    py_config_lists = debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, 
+                        py_cand_set, py_num_fields, len(lrecord_token_list), len(rrecord_token_list))
+
+    # parallel computer topk based on config lists
+    rec_lists = Parallel(n_jobs = -1, verbose = 1, backend =
+            "threading")(delayed(debugblocker_topk_cython_wrapper)
+        (py_config_lists[i], lrecord_token_list, rrecord_token_list,
+        lrecord_index_list, rrecord_index_list, py_cand_set,
+        py_output_size) for i in xrange(len(py_config_lists)))
+
+    py_rec_list = debugblocker_merge_topk_cython(rec_lists)
+    
+    return py_rec_list
 
 # Validate the types of input parameters.
 def _validate_types(ltable, rtable, candidate_set, output_size,

@@ -728,11 +728,12 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "debugblocker_cython.pyx",
+  "stringsource",
 };
 
-/* "debugblock/debugblocker_cython.pyx":11
- * from cython.parallel import prange, parallel
- * import time
+/* "debugblock/debugblocker_cython.pyx":13
+ * from joblib import Parallel, delayed
+ * 
  * ctypedef unsigned int uint             # <<<<<<<<<<<<<<
  * 
  * cdef extern from "GenerateRecomLists.h" nogil:
@@ -863,6 +864,24 @@ static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
 #define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
 #endif
 
+/* PyFunctionFastCall.proto */
+#if CYTHON_FAST_PYCALL
+#define __Pyx_PyFunction_FastCall(func, args, nargs)\
+    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
+#if 1 || PY_VERSION_HEX < 0x030600B1
+static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, int nargs, PyObject *kwargs);
+#else
+#define __Pyx_PyFunction_FastCallDict(func, args, nargs, kwargs) _PyFunction_FastCallDict(func, args, nargs, kwargs)
+#endif
+#endif
+
+/* PyCFunctionFastCall.proto */
+#if CYTHON_FAST_PYCCALL
+static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
+#else
+#define __Pyx_PyCFunction_FastCall(func, args, nargs)  (assert(0), NULL)
+#endif
+
 /* GetItemInt.proto */
 #define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
     (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
@@ -884,6 +903,26 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize
 static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
 static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
                                                      int is_list, int wraparound, int boundscheck);
+
+/* PyObjectCallMethO.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+/* PyObjectCallOneArg.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
+/* RaiseTooManyValuesToUnpack.proto */
+static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
+
+/* RaiseNeedMoreValuesToUnpack.proto */
+static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
+
+/* IterFinish.proto */
+static CYTHON_INLINE int __Pyx_IterFinish(void);
+
+/* UnpackItemEndCheck.proto */
+static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
 
 /* PyThreadStateGet.proto */
 #if CYTHON_FAST_THREAD_STATE
@@ -914,8 +953,28 @@ static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
                                   int full_traceback, int nogil);
 
+/* ListCompAppend.proto */
+#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
+static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
+    PyListObject* L = (PyListObject*) list;
+    Py_ssize_t len = Py_SIZE(list);
+    if (likely(L->allocated > len)) {
+        Py_INCREF(x);
+        PyList_SET_ITEM(list, len, x);
+        Py_SIZE(list) = len+1;
+        return 0;
+    }
+    return PyList_Append(list, x);
+}
+#else
+#define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
+#endif
+
 /* Import.proto */
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
+
+/* ImportFrom.proto */
+static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 
 /* CLineInTraceback.proto */
 static int __Pyx_CLineForTraceback(int c_line);
@@ -981,15 +1040,15 @@ static void __Pyx_CppExn2PyErr() {
 }
 #endif
 
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
+
 /* Print.proto */
 static int __Pyx_Print(PyObject*, PyObject *, int);
 #if CYTHON_COMPILING_IN_PYPY || PY_MAJOR_VERSION >= 3
 static PyObject* __pyx_print = 0;
 static PyObject* __pyx_print_kwargs = 0;
 #endif
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
@@ -1037,9 +1096,14 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 /* Module declarations from 'libc.stdio' */
 
 /* Module declarations from 'debugblock.debugblocker_cython' */
+static void __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector_map(PyObject *, std::vector<std::map<std::pair<int,int> ,int> >  &); /*proto*/
 static void __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(PyObject *, std::vector<std::vector<int> >  &); /*proto*/
 static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_c_map(PyObject *, std::map<int,std::set<int> >  &); /*proto*/
 static int __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(PyObject *, std::vector<int>  &); /*proto*/
+static PyObject *__pyx_convert_pair_to_py_int____int(std::pair<int,int>  const &); /*proto*/
+static PyObject *__pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int(std::map<std::pair<int,int> ,int>  const &); /*proto*/
+static PyObject *__pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___(const std::vector<std::map<std::pair<int,int> ,int> >  &); /*proto*/
+static std::pair<int,int>  __pyx_convert_pair_from_py_int__and_int(PyObject *); /*proto*/
 #define __Pyx_MODULE_NAME "debugblock.debugblocker_cython"
 int __pyx_module_is_main_debugblock__debugblocker_cython = 0;
 
@@ -1047,6 +1111,8 @@ int __pyx_module_is_main_debugblock__debugblocker_cython = 0;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_xrange;
 static const char __pyx_k_i[] = "i";
+static const char __pyx_k_j[] = "j";
+static const char __pyx_k_it[] = "it";
 static const char __pyx_k_end[] = "end";
 static const char __pyx_k_file[] = "file";
 static const char __pyx_k_main[] = "__main__";
@@ -1054,24 +1120,39 @@ static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_time[] = "time";
 static const char __pyx_k_print[] = "print";
 static const char __pyx_k_range[] = "range";
+static const char __pyx_k_config[] = "config";
 static const char __pyx_k_import[] = "__import__";
+static const char __pyx_k_joblib[] = "joblib";
 static const char __pyx_k_xrange[] = "xrange";
+static const char __pyx_k_delayed[] = "delayed";
+static const char __pyx_k_Parallel[] = "Parallel";
 static const char __pyx_k_cand_set[] = "cand_set";
 static const char __pyx_k_rec_list[] = "rec_list";
+static const char __pyx_k_tmp_list[] = "tmp_list";
 static const char __pyx_k_generator[] = "generator";
+static const char __pyx_k_py_config[] = "py_config";
+static const char __pyx_k_rec_lists[] = "rec_lists";
 static const char __pyx_k_field_list[] = "field_list";
 static const char __pyx_k_ltoken_sum[] = "ltoken_sum";
 static const char __pyx_k_rtoken_sum[] = "rtoken_sum";
+static const char __pyx_k_ltable_size[] = "ltable_size";
 static const char __pyx_k_output_size[] = "output_size";
 static const char __pyx_k_py_cand_set[] = "py_cand_set";
 static const char __pyx_k_py_rec_list[] = "py_rec_list";
+static const char __pyx_k_rtable_size[] = "rtable_size";
+static const char __pyx_k_config_lists[] = "config_lists";
+static const char __pyx_k_py_rec_lists[] = "py_rec_lists";
 static const char __pyx_k_lindex_vector[] = "lindex_vector";
 static const char __pyx_k_ltoken_vector[] = "ltoken_vector";
 static const char __pyx_k_max_field_num[] = "max_field_num";
 static const char __pyx_k_py_num_fields[] = "py_num_fields";
 static const char __pyx_k_rindex_vector[] = "rindex_vector";
 static const char __pyx_k_rtoken_vector[] = "rtoken_vector";
+static const char __pyx_k_py_config_list[] = "py_config_list";
+static const char __pyx_k_py_ltable_size[] = "py_ltable_size";
 static const char __pyx_k_py_output_size[] = "py_output_size";
+static const char __pyx_k_py_rtable_size[] = "py_rtable_size";
+static const char __pyx_k_py_config_lists[] = "py_config_lists";
 static const char __pyx_k_FIELD_REMOVE_RATIO[] = "FIELD_REMOVE_RATIO";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_field_remove_ratio[] = "field_remove_ratio";
@@ -1082,14 +1163,26 @@ static const char __pyx_k_rrecord_token_list[] = "rrecord_token_list";
 static const char __pyx_k_debugblocker_cython[] = "debugblocker_cython";
 static const char __pyx_k_ltable_field_token_sum[] = "ltable_field_token_sum";
 static const char __pyx_k_rtable_field_token_sum[] = "rtable_field_token_sum";
+static const char __pyx_k_debugblocker_cython_old[] = "debugblocker_cython_old";
 static const char __pyx_k_debugblocker_cython_pyx[] = "debugblocker_cython.pyx";
+static const char __pyx_k_debugblocker_topk_cython[] = "debugblocker_topk_cython";
+static const char __pyx_k_debugblocker_config_cython[] = "debugblocker_config_cython";
 static const char __pyx_k_debugblock_debugblocker_cython[] = "debugblock.debugblocker_cython";
+static const char __pyx_k_debugblocker_merge_topk_cython[] = "debugblocker_merge_topk_cython";
 static PyObject *__pyx_n_s_FIELD_REMOVE_RATIO;
+static PyObject *__pyx_n_s_Parallel;
 static PyObject *__pyx_n_s_cand_set;
 static PyObject *__pyx_n_s_cline_in_traceback;
+static PyObject *__pyx_n_s_config;
+static PyObject *__pyx_n_s_config_lists;
 static PyObject *__pyx_n_s_debugblock_debugblocker_cython;
+static PyObject *__pyx_n_s_debugblocker_config_cython;
 static PyObject *__pyx_n_s_debugblocker_cython;
+static PyObject *__pyx_n_s_debugblocker_cython_old;
 static PyObject *__pyx_kp_s_debugblocker_cython_pyx;
+static PyObject *__pyx_n_s_debugblocker_merge_topk_cython;
+static PyObject *__pyx_n_s_debugblocker_topk_cython;
+static PyObject *__pyx_n_s_delayed;
 static PyObject *__pyx_n_s_end;
 static PyObject *__pyx_n_s_field_list;
 static PyObject *__pyx_n_s_field_remove_ratio;
@@ -1097,10 +1190,14 @@ static PyObject *__pyx_n_s_file;
 static PyObject *__pyx_n_s_generator;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
+static PyObject *__pyx_n_s_it;
+static PyObject *__pyx_n_s_j;
+static PyObject *__pyx_n_s_joblib;
 static PyObject *__pyx_n_s_lindex_vector;
 static PyObject *__pyx_n_s_lrecord_index_list;
 static PyObject *__pyx_n_s_lrecord_token_list;
 static PyObject *__pyx_n_s_ltable_field_token_sum;
+static PyObject *__pyx_n_s_ltable_size;
 static PyObject *__pyx_n_s_ltoken_sum;
 static PyObject *__pyx_n_s_ltoken_vector;
 static PyObject *__pyx_n_s_main;
@@ -1108,27 +1205,724 @@ static PyObject *__pyx_n_s_max_field_num;
 static PyObject *__pyx_n_s_output_size;
 static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_s_py_cand_set;
+static PyObject *__pyx_n_s_py_config;
+static PyObject *__pyx_n_s_py_config_list;
+static PyObject *__pyx_n_s_py_config_lists;
+static PyObject *__pyx_n_s_py_ltable_size;
 static PyObject *__pyx_n_s_py_num_fields;
 static PyObject *__pyx_n_s_py_output_size;
 static PyObject *__pyx_n_s_py_rec_list;
+static PyObject *__pyx_n_s_py_rec_lists;
+static PyObject *__pyx_n_s_py_rtable_size;
 static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_rec_list;
+static PyObject *__pyx_n_s_rec_lists;
 static PyObject *__pyx_n_s_rindex_vector;
 static PyObject *__pyx_n_s_rrecord_index_list;
 static PyObject *__pyx_n_s_rrecord_token_list;
 static PyObject *__pyx_n_s_rtable_field_token_sum;
+static PyObject *__pyx_n_s_rtable_size;
 static PyObject *__pyx_n_s_rtoken_sum;
 static PyObject *__pyx_n_s_rtoken_vector;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_time;
+static PyObject *__pyx_n_s_tmp_list;
 static PyObject *__pyx_n_s_xrange;
-static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_output_size); /* proto */
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython_old(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_output_size); /* proto */
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_2debugblocker_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_output_size); /* proto */
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_4debugblocker_config_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, CYTHON_UNUSED PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_ltable_size, PyObject *__pyx_v_py_rtable_size); /* proto */
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_6debugblocker_topk_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_py_config, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_output_size); /* proto */
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_8debugblocker_merge_topk_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_py_rec_lists); /* proto */
 static PyObject *__pyx_float_0_1;
 static PyObject *__pyx_tuple_;
+static PyObject *__pyx_tuple__3;
+static PyObject *__pyx_tuple__5;
+static PyObject *__pyx_tuple__7;
+static PyObject *__pyx_tuple__9;
 static PyObject *__pyx_codeobj__2;
+static PyObject *__pyx_codeobj__4;
+static PyObject *__pyx_codeobj__6;
+static PyObject *__pyx_codeobj__8;
+static PyObject *__pyx_codeobj__10;
 
-/* "debugblock/debugblocker_cython.pyx":37
- * FIELD_REMOVE_RATIO = 0.1
+/* "debugblock/debugblocker_cython.pyx":45
+ * 
+ * 
+ * def debugblocker_cython_old(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cython_old(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10debugblock_19debugblocker_cython_1debugblocker_cython_old = {"debugblocker_cython_old", (PyCFunction)__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cython_old, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cython_old(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_lrecord_token_list = 0;
+  PyObject *__pyx_v_rrecord_token_list = 0;
+  PyObject *__pyx_v_lrecord_index_list = 0;
+  PyObject *__pyx_v_rrecord_index_list = 0;
+  PyObject *__pyx_v_ltable_field_token_sum = 0;
+  PyObject *__pyx_v_rtable_field_token_sum = 0;
+  PyObject *__pyx_v_py_cand_set = 0;
+  PyObject *__pyx_v_py_num_fields = 0;
+  PyObject *__pyx_v_py_output_size = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("debugblocker_cython_old (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_lrecord_token_list,&__pyx_n_s_rrecord_token_list,&__pyx_n_s_lrecord_index_list,&__pyx_n_s_rrecord_index_list,&__pyx_n_s_ltable_field_token_sum,&__pyx_n_s_rtable_field_token_sum,&__pyx_n_s_py_cand_set,&__pyx_n_s_py_num_fields,&__pyx_n_s_py_output_size,0};
+    PyObject* values[9] = {0,0,0,0,0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  9: values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
+        CYTHON_FALLTHROUGH;
+        case  8: values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
+        CYTHON_FALLTHROUGH;
+        case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+        CYTHON_FALLTHROUGH;
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lrecord_token_list)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rrecord_token_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 1); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lrecord_index_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 2); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rrecord_index_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 3); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_ltable_field_token_sum)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 4); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rtable_field_token_sum)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 5); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  6:
+        if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_cand_set)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 6); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  7:
+        if (likely((values[7] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_num_fields)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 7); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  8:
+        if (likely((values[8] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_output_size)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, 8); __PYX_ERR(0, 45, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "debugblocker_cython_old") < 0)) __PYX_ERR(0, 45, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 9) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+      values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+      values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
+      values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
+    }
+    __pyx_v_lrecord_token_list = values[0];
+    __pyx_v_rrecord_token_list = values[1];
+    __pyx_v_lrecord_index_list = values[2];
+    __pyx_v_rrecord_index_list = values[3];
+    __pyx_v_ltable_field_token_sum = values[4];
+    __pyx_v_rtable_field_token_sum = values[5];
+    __pyx_v_py_cand_set = values[6];
+    __pyx_v_py_num_fields = values[7];
+    __pyx_v_py_output_size = values[8];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("debugblocker_cython_old", 1, 9, 9, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 45, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_cython_old", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython_old(__pyx_self, __pyx_v_lrecord_token_list, __pyx_v_rrecord_token_list, __pyx_v_lrecord_index_list, __pyx_v_rrecord_index_list, __pyx_v_ltable_field_token_sum, __pyx_v_rtable_field_token_sum, __pyx_v_py_cand_set, __pyx_v_py_num_fields, __pyx_v_py_output_size);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython_old(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_output_size) {
+  std::vector<std::vector<int> >  __pyx_v_ltoken_vector;
+  std::vector<std::vector<int> >  __pyx_v_rtoken_vector;
+  std::vector<std::vector<int> >  __pyx_v_lindex_vector;
+  std::vector<std::vector<int> >  __pyx_v_rindex_vector;
+  std::vector<int>  __pyx_v_ltoken_sum;
+  std::vector<int>  __pyx_v_rtoken_sum;
+  std::map<int,std::set<int> >  __pyx_v_cand_set;
+  std::vector<int>  __pyx_v_field_list;
+  PyObject *__pyx_v_i = NULL;
+  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_v_output_size;
+  double __pyx_v_field_remove_ratio;
+  CYTHON_UNUSED int __pyx_v_max_field_num;
+  GenerateRecomLists __pyx_v_generator;
+  std::vector<std::vector<int> >  __pyx_v_config_lists;
+  std::vector<std::map<std::pair<int,int> ,int> >  __pyx_v_rec_lists;
+  std::vector<RecPair>  __pyx_v_rec_list;
+  PyObject *__pyx_v_py_rec_list = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  Py_ssize_t __pyx_t_3;
+  PyObject *(*__pyx_t_4)(PyObject *);
+  int __pyx_t_5;
+  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_t_6;
+  double __pyx_t_7;
+  std::vector<std::vector<int> > ::size_type __pyx_t_8;
+  std::vector<RecPair> ::size_type __pyx_t_9;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_12 = NULL;
+  int __pyx_t_13;
+  __Pyx_RefNannySetupContext("debugblocker_cython_old", 0);
+  __Pyx_INCREF(__pyx_v_lrecord_token_list);
+  __Pyx_INCREF(__pyx_v_rrecord_token_list);
+  __Pyx_INCREF(__pyx_v_lrecord_index_list);
+  __Pyx_INCREF(__pyx_v_rrecord_index_list);
+  __Pyx_INCREF(__pyx_v_py_cand_set);
+
+  /* "debugblock/debugblocker_cython.pyx":52
+ *     ### Convert py objs to c++ objs
+ *     cdef vector[vector[int]] ltoken_vector, rtoken_vector
+ *     convert_table_to_vector(lrecord_token_list, ltoken_vector)             # <<<<<<<<<<<<<<
+ *     convert_table_to_vector(rrecord_token_list, rtoken_vector)
+ * 
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_lrecord_token_list, __pyx_v_ltoken_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":53
+ *     cdef vector[vector[int]] ltoken_vector, rtoken_vector
+ *     convert_table_to_vector(lrecord_token_list, ltoken_vector)
+ *     convert_table_to_vector(rrecord_token_list, rtoken_vector)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef vector[vector[int]] lindex_vector, rindex_vector
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_rrecord_token_list, __pyx_v_rtoken_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":56
+ * 
+ *     cdef vector[vector[int]] lindex_vector, rindex_vector
+ *     convert_table_to_vector(lrecord_index_list, lindex_vector)             # <<<<<<<<<<<<<<
+ *     convert_table_to_vector(rrecord_index_list, rindex_vector)
+ * 
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_lrecord_index_list, __pyx_v_lindex_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":57
+ *     cdef vector[vector[int]] lindex_vector, rindex_vector
+ *     convert_table_to_vector(lrecord_index_list, lindex_vector)
+ *     convert_table_to_vector(rrecord_index_list, rindex_vector)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef vector[int] ltoken_sum, rtoken_sum
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_rrecord_index_list, __pyx_v_rindex_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":60
+ * 
+ *     cdef vector[int] ltoken_sum, rtoken_sum
+ *     convert_py_list_to_vector(ltable_field_token_sum, ltoken_sum)             # <<<<<<<<<<<<<<
+ *     convert_py_list_to_vector(rtable_field_token_sum, rtoken_sum)
+ * 
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(__pyx_v_ltable_field_token_sum, __pyx_v_ltoken_sum);
+
+  /* "debugblock/debugblocker_cython.pyx":61
+ *     cdef vector[int] ltoken_sum, rtoken_sum
+ *     convert_py_list_to_vector(ltable_field_token_sum, ltoken_sum)
+ *     convert_py_list_to_vector(rtable_field_token_sum, rtoken_sum)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef cmap[int, cset[int]] cand_set
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(__pyx_v_rtable_field_token_sum, __pyx_v_rtoken_sum);
+
+  /* "debugblock/debugblocker_cython.pyx":64
+ * 
+ *     cdef cmap[int, cset[int]] cand_set
+ *     convert_candidate_set_to_c_map(py_cand_set, cand_set)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef vector[int] field_list
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_c_map(__pyx_v_py_cand_set, __pyx_v_cand_set);
+
+  /* "debugblock/debugblocker_cython.pyx":67
+ * 
+ *     cdef vector[int] field_list
+ *     for i in range(py_num_fields):             # <<<<<<<<<<<<<<
+ *         field_list.push_back(i)
+ * 
+ */
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_v_py_num_fields);
+  __Pyx_GIVEREF(__pyx_v_py_num_fields);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_py_num_fields);
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
+    __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
+    __pyx_t_4 = NULL;
+  } else {
+    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_4)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 67, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      } else {
+        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 67, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      }
+    } else {
+      __pyx_t_2 = __pyx_t_4(__pyx_t_1);
+      if (unlikely(!__pyx_t_2)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 67, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_2);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":68
+ *     cdef vector[int] field_list
+ *     for i in range(py_num_fields):
+ *         field_list.push_back(i)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef uint output_size = py_output_size
+ */
+    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_i); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L1_error)
+    try {
+      __pyx_v_field_list.push_back(__pyx_t_5);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 68, __pyx_L1_error)
+    }
+
+    /* "debugblock/debugblocker_cython.pyx":67
+ * 
+ *     cdef vector[int] field_list
+ *     for i in range(py_num_fields):             # <<<<<<<<<<<<<<
+ *         field_list.push_back(i)
+ * 
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":70
+ *         field_list.push_back(i)
+ * 
+ *     cdef uint output_size = py_output_size             # <<<<<<<<<<<<<<
+ *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO
+ * 
+ */
+  __pyx_t_6 = __Pyx_PyInt_As_unsigned_int(__pyx_v_py_output_size); if (unlikely((__pyx_t_6 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_v_output_size = __pyx_t_6;
+
+  /* "debugblock/debugblocker_cython.pyx":71
+ * 
+ *     cdef uint output_size = py_output_size
+ *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO             # <<<<<<<<<<<<<<
+ * 
+ *     del lrecord_token_list, rrecord_token_list
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_FIELD_REMOVE_RATIO); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 71, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_field_remove_ratio = __pyx_t_7;
+
+  /* "debugblock/debugblocker_cython.pyx":73
+ *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO
+ * 
+ *     del lrecord_token_list, rrecord_token_list             # <<<<<<<<<<<<<<
+ *     del lrecord_index_list, rrecord_index_list
+ *     del py_cand_set
+ */
+  __Pyx_DECREF(__pyx_v_lrecord_token_list);
+  __pyx_v_lrecord_token_list = NULL;
+  __Pyx_DECREF(__pyx_v_rrecord_token_list);
+  __pyx_v_rrecord_token_list = NULL;
+
+  /* "debugblock/debugblocker_cython.pyx":74
+ * 
+ *     del lrecord_token_list, rrecord_token_list
+ *     del lrecord_index_list, rrecord_index_list             # <<<<<<<<<<<<<<
+ *     del py_cand_set
+ * 
+ */
+  __Pyx_DECREF(__pyx_v_lrecord_index_list);
+  __pyx_v_lrecord_index_list = NULL;
+  __Pyx_DECREF(__pyx_v_rrecord_index_list);
+  __pyx_v_rrecord_index_list = NULL;
+
+  /* "debugblock/debugblocker_cython.pyx":75
+ *     del lrecord_token_list, rrecord_token_list
+ *     del lrecord_index_list, rrecord_index_list
+ *     del py_cand_set             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_DECREF(__pyx_v_py_cand_set);
+  __pyx_v_py_cand_set = NULL;
+
+  /* "debugblock/debugblocker_cython.pyx":78
+ * 
+ * 
+ *     cdef int max_field_num = field_list.size()             # <<<<<<<<<<<<<<
+ * 
+ *     cdef GenerateRecomLists generator
+ */
+  __pyx_v_max_field_num = __pyx_v_field_list.size();
+
+  /* "debugblock/debugblocker_cython.pyx":83
+ * 
+ *     cdef vector[vector[int]] config_lists;
+ *     config_lists = generator.generate_config(field_list, ltoken_sum, rtoken_sum,             # <<<<<<<<<<<<<<
+ *                                             field_remove_ratio,
+ *                                             ltoken_vector.size(),
+ */
+  __pyx_v_config_lists = __pyx_v_generator.generate_config(__pyx_v_field_list, __pyx_v_ltoken_sum, __pyx_v_rtoken_sum, __pyx_v_field_remove_ratio, __pyx_v_ltoken_vector.size(), __pyx_v_rtoken_vector.size());
+
+  /* "debugblock/debugblocker_cython.pyx":89
+ * 
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists;
+ *     for i in xrange(config_lists.size()):             # <<<<<<<<<<<<<<
+ *         rec_lists.push_back(generator.generate_topk_with_config(config_lists[i], ltoken_vector, rtoken_vector,
+ *                               lindex_vector, rindex_vector, cand_set,
+ */
+  __pyx_t_1 = __Pyx_PyInt_FromSize_t(__pyx_v_config_lists.size()); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_xrange, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
+    __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_3 = 0;
+    __pyx_t_4 = NULL;
+  } else {
+    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_4 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 89, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_4)) {
+      if (likely(PyList_CheckExact(__pyx_t_2))) {
+        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 89, __pyx_L1_error)
+        #else
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        #endif
+      } else {
+        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 89, __pyx_L1_error)
+        #else
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        #endif
+      }
+    } else {
+      __pyx_t_1 = __pyx_t_4(__pyx_t_2);
+      if (unlikely(!__pyx_t_1)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 89, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_1);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_1);
+    __pyx_t_1 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":90
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists;
+ *     for i in xrange(config_lists.size()):
+ *         rec_lists.push_back(generator.generate_topk_with_config(config_lists[i], ltoken_vector, rtoken_vector,             # <<<<<<<<<<<<<<
+ *                               lindex_vector, rindex_vector, cand_set,
+ *                               output_size));
+ */
+    __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 90, __pyx_L1_error)
+
+    /* "debugblock/debugblocker_cython.pyx":92
+ *         rec_lists.push_back(generator.generate_topk_with_config(config_lists[i], ltoken_vector, rtoken_vector,
+ *                               lindex_vector, rindex_vector, cand_set,
+ *                               output_size));             # <<<<<<<<<<<<<<
+ * 
+ *     print rec_lists
+ */
+    try {
+      __pyx_v_rec_lists.push_back(__pyx_v_generator.generate_topk_with_config((__pyx_v_config_lists[__pyx_t_8]), __pyx_v_ltoken_vector, __pyx_v_rtoken_vector, __pyx_v_lindex_vector, __pyx_v_rindex_vector, __pyx_v_cand_set, __pyx_v_output_size));
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 90, __pyx_L1_error)
+    }
+
+    /* "debugblock/debugblocker_cython.pyx":89
+ * 
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists;
+ *     for i in xrange(config_lists.size()):             # <<<<<<<<<<<<<<
+ *         rec_lists.push_back(generator.generate_topk_with_config(config_lists[i], ltoken_vector, rtoken_vector,
+ *                               lindex_vector, rindex_vector, cand_set,
+ */
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":94
+ *                               output_size));
+ * 
+ *     print rec_lists             # <<<<<<<<<<<<<<
+ *     cdef vector[RecPair] rec_list;
+ * 
+ */
+  __pyx_t_2 = __pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___(__pyx_v_rec_lists); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":97
+ *     cdef vector[RecPair] rec_list;
+ * 
+ *     rec_list = generator.merge_topk_lists(rec_lists);             # <<<<<<<<<<<<<<
+ *     py_rec_list = []
+ *     for i in xrange(rec_list.size()):
+ */
+  __pyx_v_rec_list = __pyx_v_generator.merge_topk_lists(__pyx_v_rec_lists);
+
+  /* "debugblock/debugblocker_cython.pyx":98
+ * 
+ *     rec_list = generator.merge_topk_lists(rec_lists);
+ *     py_rec_list = []             # <<<<<<<<<<<<<<
+ *     for i in xrange(rec_list.size()):
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+ */
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_v_py_rec_list = ((PyObject*)__pyx_t_2);
+  __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":99
+ *     rec_list = generator.merge_topk_lists(rec_lists);
+ *     py_rec_list = []
+ *     for i in xrange(rec_list.size()):             # <<<<<<<<<<<<<<
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+ * 
+ */
+  __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_rec_list.size()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_xrange, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
+    __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
+    __pyx_t_4 = NULL;
+  } else {
+    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_4)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 99, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      } else {
+        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 99, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      }
+    } else {
+      __pyx_t_2 = __pyx_t_4(__pyx_t_1);
+      if (unlikely(!__pyx_t_2)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 99, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_2);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":100
+ *     py_rec_list = []
+ *     for i in xrange(rec_list.size()):
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))             # <<<<<<<<<<<<<<
+ * 
+ *     return py_rec_list
+ */
+    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_t_9]).rank); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_t_9]).l_rec); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_10);
+    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_t_9]).r_rec); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __pyx_t_12 = PyTuple_New(3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_12);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_10);
+    PyTuple_SET_ITEM(__pyx_t_12, 1, __pyx_t_10);
+    __Pyx_GIVEREF(__pyx_t_11);
+    PyTuple_SET_ITEM(__pyx_t_12, 2, __pyx_t_11);
+    __pyx_t_2 = 0;
+    __pyx_t_10 = 0;
+    __pyx_t_11 = 0;
+    __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_py_rec_list, __pyx_t_12); if (unlikely(__pyx_t_13 == -1)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":99
+ *     rec_list = generator.merge_topk_lists(rec_lists);
+ *     py_rec_list = []
+ *     for i in xrange(rec_list.size()):             # <<<<<<<<<<<<<<
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+ * 
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":102
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+ * 
+ *     return py_rec_list             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_py_rec_list);
+  __pyx_r = __pyx_v_py_rec_list;
+  goto __pyx_L0;
+
+  /* "debugblock/debugblocker_cython.pyx":45
+ * 
+ * 
+ * def debugblocker_cython_old(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_cython_old", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_i);
+  __Pyx_XDECREF(__pyx_v_py_rec_list);
+  __Pyx_XDECREF(__pyx_v_lrecord_token_list);
+  __Pyx_XDECREF(__pyx_v_rrecord_token_list);
+  __Pyx_XDECREF(__pyx_v_lrecord_index_list);
+  __Pyx_XDECREF(__pyx_v_rrecord_index_list);
+  __Pyx_XDECREF(__pyx_v_py_cand_set);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "debugblock/debugblocker_cython.pyx":105
+ * 
  * 
  * def debugblocker_cython(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
  *                         lrecord_index_list, rrecord_index_list,
@@ -1136,9 +1930,9 @@ static PyObject *__pyx_codeobj__2;
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_10debugblock_19debugblocker_cython_1debugblocker_cython = {"debugblocker_cython", (PyCFunction)__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cython, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_3debugblocker_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10debugblock_19debugblocker_cython_3debugblocker_cython = {"debugblocker_cython", (PyCFunction)__pyx_pw_10debugblock_19debugblocker_cython_3debugblocker_cython, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_3debugblocker_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_lrecord_token_list = 0;
   PyObject *__pyx_v_rrecord_token_list = 0;
   PyObject *__pyx_v_lrecord_index_list = 0;
@@ -1188,53 +1982,53 @@ static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cytho
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rrecord_token_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 1); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 1); __PYX_ERR(0, 105, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lrecord_index_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 2); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 2); __PYX_ERR(0, 105, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rrecord_index_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 3); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 3); __PYX_ERR(0, 105, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_ltable_field_token_sum)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 4); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 4); __PYX_ERR(0, 105, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rtable_field_token_sum)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 5); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 5); __PYX_ERR(0, 105, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_cand_set)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 6); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 6); __PYX_ERR(0, 105, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  7:
         if (likely((values[7] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_num_fields)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 7); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 7); __PYX_ERR(0, 105, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  8:
         if (likely((values[8] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_output_size)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 8); __PYX_ERR(0, 37, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, 8); __PYX_ERR(0, 105, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "debugblocker_cython") < 0)) __PYX_ERR(0, 37, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "debugblocker_cython") < 0)) __PYX_ERR(0, 105, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 9) {
       goto __pyx_L5_argtuple_error;
@@ -1261,421 +2055,319 @@ static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_1debugblocker_cytho
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 37, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("debugblocker_cython", 1, 9, 9, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 105, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython(__pyx_self, __pyx_v_lrecord_token_list, __pyx_v_rrecord_token_list, __pyx_v_lrecord_index_list, __pyx_v_rrecord_index_list, __pyx_v_ltable_field_token_sum, __pyx_v_rtable_field_token_sum, __pyx_v_py_cand_set, __pyx_v_py_num_fields, __pyx_v_py_output_size);
+  __pyx_r = __pyx_pf_10debugblock_19debugblocker_cython_2debugblocker_cython(__pyx_self, __pyx_v_lrecord_token_list, __pyx_v_rrecord_token_list, __pyx_v_lrecord_index_list, __pyx_v_rrecord_index_list, __pyx_v_ltable_field_token_sum, __pyx_v_rtable_field_token_sum, __pyx_v_py_cand_set, __pyx_v_py_num_fields, __pyx_v_py_output_size);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_output_size) {
-  std::vector<std::vector<int> >  __pyx_v_ltoken_vector;
-  std::vector<std::vector<int> >  __pyx_v_rtoken_vector;
-  std::vector<std::vector<int> >  __pyx_v_lindex_vector;
-  std::vector<std::vector<int> >  __pyx_v_rindex_vector;
-  std::vector<int>  __pyx_v_ltoken_sum;
-  std::vector<int>  __pyx_v_rtoken_sum;
-  std::map<int,std::set<int> >  __pyx_v_cand_set;
-  std::vector<int>  __pyx_v_field_list;
-  PyObject *__pyx_v_i = NULL;
-  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_v_output_size;
-  double __pyx_v_field_remove_ratio;
-  CYTHON_UNUSED int __pyx_v_max_field_num;
-  GenerateRecomLists __pyx_v_generator;
-  std::vector<RecPair>  __pyx_v_rec_list;
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_2debugblocker_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_output_size) {
+  PyObject *__pyx_v_py_config_lists = NULL;
+  PyObject *__pyx_v_rec_lists = NULL;
+  Py_ssize_t __pyx_v_i;
   PyObject *__pyx_v_py_rec_list = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   Py_ssize_t __pyx_t_3;
-  PyObject *(*__pyx_t_4)(PyObject *);
-  int __pyx_t_5;
-  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_t_6;
-  double __pyx_t_7;
-  std::vector<RecPair> ::size_type __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  int __pyx_t_12;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  Py_ssize_t __pyx_t_9;
+  int __pyx_t_10;
   __Pyx_RefNannySetupContext("debugblocker_cython", 0);
-  __Pyx_INCREF(__pyx_v_lrecord_token_list);
-  __Pyx_INCREF(__pyx_v_rrecord_token_list);
-  __Pyx_INCREF(__pyx_v_lrecord_index_list);
-  __Pyx_INCREF(__pyx_v_rrecord_index_list);
-  __Pyx_INCREF(__pyx_v_py_cand_set);
 
-  /* "debugblock/debugblocker_cython.pyx":44
- *     ### Convert py objs to c++ objs
- *     cdef vector[vector[int]] ltoken_vector, rtoken_vector
- *     convert_table_to_vector(lrecord_token_list, ltoken_vector)             # <<<<<<<<<<<<<<
- *     convert_table_to_vector(rrecord_token_list, rtoken_vector)
+  /* "debugblock/debugblocker_cython.pyx":111
+ * 
+ *     # generate config lists
+ *     py_config_lists = debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum,             # <<<<<<<<<<<<<<
+ *                         py_cand_set, py_num_fields, len(lrecord_token_list), len(rrecord_token_list))
  * 
  */
-  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_lrecord_token_list, __pyx_v_ltoken_vector);
-
-  /* "debugblock/debugblocker_cython.pyx":45
- *     cdef vector[vector[int]] ltoken_vector, rtoken_vector
- *     convert_table_to_vector(lrecord_token_list, ltoken_vector)
- *     convert_table_to_vector(rrecord_token_list, rtoken_vector)             # <<<<<<<<<<<<<<
- * 
- *     cdef vector[vector[int]] lindex_vector, rindex_vector
- */
-  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_rrecord_token_list, __pyx_v_rtoken_vector);
-
-  /* "debugblock/debugblocker_cython.pyx":48
- * 
- *     cdef vector[vector[int]] lindex_vector, rindex_vector
- *     convert_table_to_vector(lrecord_index_list, lindex_vector)             # <<<<<<<<<<<<<<
- *     convert_table_to_vector(rrecord_index_list, rindex_vector)
- * 
- */
-  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_lrecord_index_list, __pyx_v_lindex_vector);
-
-  /* "debugblock/debugblocker_cython.pyx":49
- *     cdef vector[vector[int]] lindex_vector, rindex_vector
- *     convert_table_to_vector(lrecord_index_list, lindex_vector)
- *     convert_table_to_vector(rrecord_index_list, rindex_vector)             # <<<<<<<<<<<<<<
- * 
- *     cdef vector[int] ltoken_sum, rtoken_sum
- */
-  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_rrecord_index_list, __pyx_v_rindex_vector);
-
-  /* "debugblock/debugblocker_cython.pyx":52
- * 
- *     cdef vector[int] ltoken_sum, rtoken_sum
- *     convert_py_list_to_vector(ltable_field_token_sum, ltoken_sum)             # <<<<<<<<<<<<<<
- *     convert_py_list_to_vector(rtable_field_token_sum, rtoken_sum)
- * 
- */
-  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(__pyx_v_ltable_field_token_sum, __pyx_v_ltoken_sum);
-
-  /* "debugblock/debugblocker_cython.pyx":53
- *     cdef vector[int] ltoken_sum, rtoken_sum
- *     convert_py_list_to_vector(ltable_field_token_sum, ltoken_sum)
- *     convert_py_list_to_vector(rtable_field_token_sum, rtoken_sum)             # <<<<<<<<<<<<<<
- * 
- *     cdef cmap[int, cset[int]] cand_set
- */
-  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(__pyx_v_rtable_field_token_sum, __pyx_v_rtoken_sum);
-
-  /* "debugblock/debugblocker_cython.pyx":56
- * 
- *     cdef cmap[int, cset[int]] cand_set
- *     convert_candidate_set_to_c_map(py_cand_set, cand_set)             # <<<<<<<<<<<<<<
- * 
- *     cdef vector[int] field_list
- */
-  __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_c_map(__pyx_v_py_cand_set, __pyx_v_cand_set);
-
-  /* "debugblock/debugblocker_cython.pyx":59
- * 
- *     cdef vector[int] field_list
- *     for i in range(py_num_fields):             # <<<<<<<<<<<<<<
- *         field_list.push_back(i)
- * 
- */
-  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_v_py_num_fields);
-  __Pyx_GIVEREF(__pyx_v_py_num_fields);
-  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_py_num_fields);
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_debugblocker_config_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
-    __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
-    __pyx_t_4 = NULL;
-  } else {
-    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+
+  /* "debugblock/debugblocker_cython.pyx":112
+ *     # generate config lists
+ *     py_config_lists = debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum,
+ *                         py_cand_set, py_num_fields, len(lrecord_token_list), len(rrecord_token_list))             # <<<<<<<<<<<<<<
+ * 
+ *     # parallel computer topk based on config lists
+ */
+  __pyx_t_3 = PyObject_Length(__pyx_v_lrecord_token_list); if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_4 = PyInt_FromSsize_t(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_3 = PyObject_Length(__pyx_v_rrecord_token_list); if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_5 = PyInt_FromSsize_t(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_6 = NULL;
+  __pyx_t_7 = 0;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_6)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_6);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __pyx_t_7 = 1;
+    }
+  }
+  #if CYTHON_FAST_PYCALL
+  if (PyFunction_Check(__pyx_t_2)) {
+    PyObject *__pyx_temp[7] = {__pyx_t_6, __pyx_v_ltable_field_token_sum, __pyx_v_rtable_field_token_sum, __pyx_v_py_cand_set, __pyx_v_py_num_fields, __pyx_t_4, __pyx_t_5};
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 6+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  } else
+  #endif
+  #if CYTHON_FAST_PYCCALL
+  if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+    PyObject *__pyx_temp[7] = {__pyx_t_6, __pyx_v_ltable_field_token_sum, __pyx_v_rtable_field_token_sum, __pyx_v_py_cand_set, __pyx_v_py_num_fields, __pyx_t_4, __pyx_t_5};
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 6+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  } else
+  #endif
+  {
+    __pyx_t_8 = PyTuple_New(6+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 111, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    if (__pyx_t_6) {
+      __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
+    }
+    __Pyx_INCREF(__pyx_v_ltable_field_token_sum);
+    __Pyx_GIVEREF(__pyx_v_ltable_field_token_sum);
+    PyTuple_SET_ITEM(__pyx_t_8, 0+__pyx_t_7, __pyx_v_ltable_field_token_sum);
+    __Pyx_INCREF(__pyx_v_rtable_field_token_sum);
+    __Pyx_GIVEREF(__pyx_v_rtable_field_token_sum);
+    PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_v_rtable_field_token_sum);
+    __Pyx_INCREF(__pyx_v_py_cand_set);
+    __Pyx_GIVEREF(__pyx_v_py_cand_set);
+    PyTuple_SET_ITEM(__pyx_t_8, 2+__pyx_t_7, __pyx_v_py_cand_set);
+    __Pyx_INCREF(__pyx_v_py_num_fields);
+    __Pyx_GIVEREF(__pyx_v_py_num_fields);
+    PyTuple_SET_ITEM(__pyx_t_8, 3+__pyx_t_7, __pyx_v_py_num_fields);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_8, 4+__pyx_t_7, __pyx_t_4);
+    __Pyx_GIVEREF(__pyx_t_5);
+    PyTuple_SET_ITEM(__pyx_t_8, 5+__pyx_t_7, __pyx_t_5);
+    __pyx_t_4 = 0;
+    __pyx_t_5 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  for (;;) {
-    if (likely(!__pyx_t_4)) {
-      if (likely(PyList_CheckExact(__pyx_t_1))) {
-        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 59, __pyx_L1_error)
-        #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        #endif
-      } else {
-        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 59, __pyx_L1_error)
-        #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        #endif
-      }
-    } else {
-      __pyx_t_2 = __pyx_t_4(__pyx_t_1);
-      if (unlikely(!__pyx_t_2)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 59, __pyx_L1_error)
-        }
-        break;
-      }
-      __Pyx_GOTREF(__pyx_t_2);
-    }
-    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
-    __pyx_t_2 = 0;
-
-    /* "debugblock/debugblocker_cython.pyx":60
- *     cdef vector[int] field_list
- *     for i in range(py_num_fields):
- *         field_list.push_back(i)             # <<<<<<<<<<<<<<
- * 
- *     cdef uint output_size = py_output_size
- */
-    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_i); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L1_error)
-    try {
-      __pyx_v_field_list.push_back(__pyx_t_5);
-    } catch(...) {
-      __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 60, __pyx_L1_error)
-    }
-
-    /* "debugblock/debugblocker_cython.pyx":59
- * 
- *     cdef vector[int] field_list
- *     for i in range(py_num_fields):             # <<<<<<<<<<<<<<
- *         field_list.push_back(i)
- * 
- */
-  }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-  /* "debugblock/debugblocker_cython.pyx":62
- *         field_list.push_back(i)
- * 
- *     cdef uint output_size = py_output_size             # <<<<<<<<<<<<<<
- *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO
- * 
- */
-  __pyx_t_6 = __Pyx_PyInt_As_unsigned_int(__pyx_v_py_output_size); if (unlikely((__pyx_t_6 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L1_error)
-  __pyx_v_output_size = __pyx_t_6;
-
-  /* "debugblock/debugblocker_cython.pyx":63
- * 
- *     cdef uint output_size = py_output_size
- *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO             # <<<<<<<<<<<<<<
- * 
- *     print lrecord_index_list
- */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_FIELD_REMOVE_RATIO); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 63, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_field_remove_ratio = __pyx_t_7;
-
-  /* "debugblock/debugblocker_cython.pyx":65
- *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO
- * 
- *     print lrecord_index_list             # <<<<<<<<<<<<<<
- *     print rrecord_index_list
- *     del lrecord_token_list, rrecord_token_list
- */
-  if (__Pyx_PrintOne(0, __pyx_v_lrecord_index_list) < 0) __PYX_ERR(0, 65, __pyx_L1_error)
-
-  /* "debugblock/debugblocker_cython.pyx":66
- * 
- *     print lrecord_index_list
- *     print rrecord_index_list             # <<<<<<<<<<<<<<
- *     del lrecord_token_list, rrecord_token_list
- *     del lrecord_index_list, rrecord_index_list
- */
-  if (__Pyx_PrintOne(0, __pyx_v_rrecord_index_list) < 0) __PYX_ERR(0, 66, __pyx_L1_error)
-
-  /* "debugblock/debugblocker_cython.pyx":67
- *     print lrecord_index_list
- *     print rrecord_index_list
- *     del lrecord_token_list, rrecord_token_list             # <<<<<<<<<<<<<<
- *     del lrecord_index_list, rrecord_index_list
- *     del py_cand_set
- */
-  __Pyx_DECREF(__pyx_v_lrecord_token_list);
-  __pyx_v_lrecord_token_list = NULL;
-  __Pyx_DECREF(__pyx_v_rrecord_token_list);
-  __pyx_v_rrecord_token_list = NULL;
-
-  /* "debugblock/debugblocker_cython.pyx":68
- *     print rrecord_index_list
- *     del lrecord_token_list, rrecord_token_list
- *     del lrecord_index_list, rrecord_index_list             # <<<<<<<<<<<<<<
- *     del py_cand_set
- * 
- */
-  __Pyx_DECREF(__pyx_v_lrecord_index_list);
-  __pyx_v_lrecord_index_list = NULL;
-  __Pyx_DECREF(__pyx_v_rrecord_index_list);
-  __pyx_v_rrecord_index_list = NULL;
-
-  /* "debugblock/debugblocker_cython.pyx":69
- *     del lrecord_token_list, rrecord_token_list
- *     del lrecord_index_list, rrecord_index_list
- *     del py_cand_set             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  __Pyx_DECREF(__pyx_v_py_cand_set);
-  __pyx_v_py_cand_set = NULL;
-
-  /* "debugblock/debugblocker_cython.pyx":72
- * 
- * 
- *     cdef int max_field_num = field_list.size()             # <<<<<<<<<<<<<<
- * 
- *     cdef GenerateRecomLists generator
- */
-  __pyx_v_max_field_num = __pyx_v_field_list.size();
-
-  /* "debugblock/debugblocker_cython.pyx":77
- * 
- *     cdef vector[RecPair] rec_list;
- *     rec_list = generator.generate_recom_lists(ltoken_vector, rtoken_vector, lindex_vector, rindex_vector,             # <<<<<<<<<<<<<<
- *                                    ltoken_sum, rtoken_sum, field_list, cand_set, field_remove_ratio, output_size)
- * 
- */
-  __pyx_v_rec_list = __pyx_v_generator.generate_recom_lists(__pyx_v_ltoken_vector, __pyx_v_rtoken_vector, __pyx_v_lindex_vector, __pyx_v_rindex_vector, __pyx_v_ltoken_sum, __pyx_v_rtoken_sum, __pyx_v_field_list, __pyx_v_cand_set, __pyx_v_field_remove_ratio, __pyx_v_output_size);
-
-  /* "debugblock/debugblocker_cython.pyx":80
- *                                    ltoken_sum, rtoken_sum, field_list, cand_set, field_remove_ratio, output_size)
- * 
- *     py_rec_list = []             # <<<<<<<<<<<<<<
- *     for i in xrange(rec_list.size()):
- *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
- */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_py_rec_list = ((PyObject*)__pyx_t_1);
+  __pyx_v_py_config_lists = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "debugblock/debugblocker_cython.pyx":81
+  /* "debugblock/debugblocker_cython.pyx":120
+ *     #    py_output_size) for i in xrange(len(py_config_lists)))
  * 
- *     py_rec_list = []
- *     for i in xrange(rec_list.size()):             # <<<<<<<<<<<<<<
- *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
- * 
+ *     rec_lists = []             # <<<<<<<<<<<<<<
+ *     for i in xrange(len(py_config_lists)):
+ *         rec_lists.append(debugblocker_topk_cython(py_config_lists[i], lrecord_token_list, rrecord_token_list,
  */
-  __pyx_t_1 = __Pyx_PyInt_FromSize_t(__pyx_v_rec_list.size()); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+  __pyx_v_rec_lists = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_xrange, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
-    __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_3 = 0;
-    __pyx_t_4 = NULL;
-  } else {
-    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+
+  /* "debugblock/debugblocker_cython.pyx":121
+ * 
+ *     rec_lists = []
+ *     for i in xrange(len(py_config_lists)):             # <<<<<<<<<<<<<<
+ *         rec_lists.append(debugblocker_topk_cython(py_config_lists[i], lrecord_token_list, rrecord_token_list,
+ *         lrecord_index_list, rrecord_index_list, py_cand_set,
+ */
+  __pyx_t_3 = PyObject_Length(__pyx_v_py_config_lists); if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 121, __pyx_L1_error)
+  for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_3; __pyx_t_9+=1) {
+    __pyx_v_i = __pyx_t_9;
+
+    /* "debugblock/debugblocker_cython.pyx":122
+ *     rec_lists = []
+ *     for i in xrange(len(py_config_lists)):
+ *         rec_lists.append(debugblocker_topk_cython(py_config_lists[i], lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *         lrecord_index_list, rrecord_index_list, py_cand_set,
+ *         py_output_size))
+ */
+    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_debugblocker_topk_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 81, __pyx_L1_error)
-  }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  for (;;) {
-    if (likely(!__pyx_t_4)) {
-      if (likely(PyList_CheckExact(__pyx_t_2))) {
-        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 81, __pyx_L1_error)
-        #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        #endif
-      } else {
-        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 81, __pyx_L1_error)
-        #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        #endif
-      }
-    } else {
-      __pyx_t_1 = __pyx_t_4(__pyx_t_2);
-      if (unlikely(!__pyx_t_1)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 81, __pyx_L1_error)
-        }
-        break;
-      }
-      __Pyx_GOTREF(__pyx_t_1);
-    }
-    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_1);
-    __pyx_t_1 = 0;
+    __pyx_t_8 = __Pyx_GetItemInt(__pyx_v_py_config_lists, __pyx_v_i, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 122, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
 
-    /* "debugblock/debugblocker_cython.pyx":82
- *     py_rec_list = []
- *     for i in xrange(rec_list.size()):
- *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))             # <<<<<<<<<<<<<<
+    /* "debugblock/debugblocker_cython.pyx":124
+ *         rec_lists.append(debugblocker_topk_cython(py_config_lists[i], lrecord_token_list, rrecord_token_list,
+ *         lrecord_index_list, rrecord_index_list, py_cand_set,
+ *         py_output_size))             # <<<<<<<<<<<<<<
+ *     print rec_lists
+ * 
+ */
+    __pyx_t_5 = NULL;
+    __pyx_t_7 = 0;
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_5)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_5);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __pyx_t_7 = 1;
+      }
+    }
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_2)) {
+      PyObject *__pyx_temp[8] = {__pyx_t_5, __pyx_t_8, __pyx_v_lrecord_token_list, __pyx_v_rrecord_token_list, __pyx_v_lrecord_index_list, __pyx_v_rrecord_index_list, __pyx_v_py_cand_set, __pyx_v_py_output_size};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 7+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+      PyObject *__pyx_temp[8] = {__pyx_t_5, __pyx_t_8, __pyx_v_lrecord_token_list, __pyx_v_rrecord_token_list, __pyx_v_lrecord_index_list, __pyx_v_rrecord_index_list, __pyx_v_py_cand_set, __pyx_v_py_output_size};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_7, 7+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_4 = PyTuple_New(7+__pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      if (__pyx_t_5) {
+        __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
+      }
+      __Pyx_GIVEREF(__pyx_t_8);
+      PyTuple_SET_ITEM(__pyx_t_4, 0+__pyx_t_7, __pyx_t_8);
+      __Pyx_INCREF(__pyx_v_lrecord_token_list);
+      __Pyx_GIVEREF(__pyx_v_lrecord_token_list);
+      PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_7, __pyx_v_lrecord_token_list);
+      __Pyx_INCREF(__pyx_v_rrecord_token_list);
+      __Pyx_GIVEREF(__pyx_v_rrecord_token_list);
+      PyTuple_SET_ITEM(__pyx_t_4, 2+__pyx_t_7, __pyx_v_rrecord_token_list);
+      __Pyx_INCREF(__pyx_v_lrecord_index_list);
+      __Pyx_GIVEREF(__pyx_v_lrecord_index_list);
+      PyTuple_SET_ITEM(__pyx_t_4, 3+__pyx_t_7, __pyx_v_lrecord_index_list);
+      __Pyx_INCREF(__pyx_v_rrecord_index_list);
+      __Pyx_GIVEREF(__pyx_v_rrecord_index_list);
+      PyTuple_SET_ITEM(__pyx_t_4, 4+__pyx_t_7, __pyx_v_rrecord_index_list);
+      __Pyx_INCREF(__pyx_v_py_cand_set);
+      __Pyx_GIVEREF(__pyx_v_py_cand_set);
+      PyTuple_SET_ITEM(__pyx_t_4, 5+__pyx_t_7, __pyx_v_py_cand_set);
+      __Pyx_INCREF(__pyx_v_py_output_size);
+      __Pyx_GIVEREF(__pyx_v_py_output_size);
+      PyTuple_SET_ITEM(__pyx_t_4, 6+__pyx_t_7, __pyx_v_py_output_size);
+      __pyx_t_8 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    }
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":122
+ *     rec_lists = []
+ *     for i in xrange(len(py_config_lists)):
+ *         rec_lists.append(debugblocker_topk_cython(py_config_lists[i], lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *         lrecord_index_list, rrecord_index_list, py_cand_set,
+ *         py_output_size))
+ */
+    __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_rec_lists, __pyx_t_1); if (unlikely(__pyx_t_10 == -1)) __PYX_ERR(0, 122, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  }
+
+  /* "debugblock/debugblocker_cython.pyx":125
+ *         lrecord_index_list, rrecord_index_list, py_cand_set,
+ *         py_output_size))
+ *     print rec_lists             # <<<<<<<<<<<<<<
+ * 
+ *     py_rec_list = debugblocker_merge_topk_cython(rec_lists)
+ */
+  if (__Pyx_PrintOne(0, __pyx_v_rec_lists) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+
+  /* "debugblock/debugblocker_cython.pyx":127
+ *     print rec_lists
+ * 
+ *     py_rec_list = debugblocker_merge_topk_cython(rec_lists)             # <<<<<<<<<<<<<<
  * 
  *     return py_rec_list
  */
-    __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 82, __pyx_L1_error)
-    __pyx_t_1 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_t_8]).rank); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_debugblocker_merge_topk_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_rec_lists); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 82, __pyx_L1_error)
-    __pyx_t_9 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_t_8]).l_rec); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 82, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 82, __pyx_L1_error)
-    __pyx_t_10 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_t_8]).r_rec); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 82, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_11 = PyTuple_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 82, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_1);
-    __Pyx_GIVEREF(__pyx_t_9);
-    PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_9);
-    __Pyx_GIVEREF(__pyx_t_10);
-    PyTuple_SET_ITEM(__pyx_t_11, 2, __pyx_t_10);
-    __pyx_t_1 = 0;
-    __pyx_t_9 = 0;
-    __pyx_t_10 = 0;
-    __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_py_rec_list, __pyx_t_11); if (unlikely(__pyx_t_12 == -1)) __PYX_ERR(0, 82, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-
-    /* "debugblock/debugblocker_cython.pyx":81
- * 
- *     py_rec_list = []
- *     for i in xrange(rec_list.size()):             # <<<<<<<<<<<<<<
- *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
- * 
- */
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_2)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_v_rec_lists};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_v_rec_lists};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+    } else
+    #endif
+    {
+      __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 127, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_INCREF(__pyx_v_rec_lists);
+      __Pyx_GIVEREF(__pyx_v_rec_lists);
+      PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_v_rec_lists);
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    }
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_py_rec_list = __pyx_t_1;
+  __pyx_t_1 = 0;
 
-  /* "debugblock/debugblocker_cython.pyx":84
- *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+  /* "debugblock/debugblocker_cython.pyx":129
+ *     py_rec_list = debugblocker_merge_topk_cython(rec_lists)
  * 
  *     return py_rec_list             # <<<<<<<<<<<<<<
  * 
- * 
+ * def debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_py_rec_list);
   __pyx_r = __pyx_v_py_rec_list;
   goto __pyx_L0;
 
-  /* "debugblock/debugblocker_cython.pyx":37
- * FIELD_REMOVE_RATIO = 0.1
+  /* "debugblock/debugblocker_cython.pyx":105
+ * 
  * 
  * def debugblocker_cython(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
  *                         lrecord_index_list, rrecord_index_list,
@@ -1686,13 +2378,832 @@ static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_py_config_lists);
+  __Pyx_XDECREF(__pyx_v_rec_lists);
+  __Pyx_XDECREF(__pyx_v_py_rec_list);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "debugblock/debugblocker_cython.pyx":131
+ *     return py_rec_list
+ * 
+ * def debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, py_cand_set,             # <<<<<<<<<<<<<<
+ *                         py_num_fields, py_ltable_size, py_rtable_size):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_5debugblocker_config_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10debugblock_19debugblocker_cython_5debugblocker_config_cython = {"debugblocker_config_cython", (PyCFunction)__pyx_pw_10debugblock_19debugblocker_cython_5debugblocker_config_cython, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_5debugblocker_config_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_ltable_field_token_sum = 0;
+  PyObject *__pyx_v_rtable_field_token_sum = 0;
+  CYTHON_UNUSED PyObject *__pyx_v_py_cand_set = 0;
+  PyObject *__pyx_v_py_num_fields = 0;
+  PyObject *__pyx_v_py_ltable_size = 0;
+  PyObject *__pyx_v_py_rtable_size = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("debugblocker_config_cython (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_ltable_field_token_sum,&__pyx_n_s_rtable_field_token_sum,&__pyx_n_s_py_cand_set,&__pyx_n_s_py_num_fields,&__pyx_n_s_py_ltable_size,&__pyx_n_s_py_rtable_size,0};
+    PyObject* values[6] = {0,0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_ltable_field_token_sum)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rtable_field_token_sum)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_config_cython", 1, 6, 6, 1); __PYX_ERR(0, 131, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_cand_set)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_config_cython", 1, 6, 6, 2); __PYX_ERR(0, 131, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_num_fields)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_config_cython", 1, 6, 6, 3); __PYX_ERR(0, 131, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_ltable_size)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_config_cython", 1, 6, 6, 4); __PYX_ERR(0, 131, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_rtable_size)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_config_cython", 1, 6, 6, 5); __PYX_ERR(0, 131, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "debugblocker_config_cython") < 0)) __PYX_ERR(0, 131, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+    }
+    __pyx_v_ltable_field_token_sum = values[0];
+    __pyx_v_rtable_field_token_sum = values[1];
+    __pyx_v_py_cand_set = values[2];
+    __pyx_v_py_num_fields = values[3];
+    __pyx_v_py_ltable_size = values[4];
+    __pyx_v_py_rtable_size = values[5];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("debugblocker_config_cython", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 131, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_config_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_10debugblock_19debugblocker_cython_4debugblocker_config_cython(__pyx_self, __pyx_v_ltable_field_token_sum, __pyx_v_rtable_field_token_sum, __pyx_v_py_cand_set, __pyx_v_py_num_fields, __pyx_v_py_ltable_size, __pyx_v_py_rtable_size);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_4debugblocker_config_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_ltable_field_token_sum, PyObject *__pyx_v_rtable_field_token_sum, CYTHON_UNUSED PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_num_fields, PyObject *__pyx_v_py_ltable_size, PyObject *__pyx_v_py_rtable_size) {
+  std::vector<int>  __pyx_v_ltoken_sum;
+  std::vector<int>  __pyx_v_rtoken_sum;
+  std::vector<int>  __pyx_v_field_list;
+  PyObject *__pyx_v_i = NULL;
+  double __pyx_v_field_remove_ratio;
+  CYTHON_UNUSED int __pyx_v_max_field_num;
+  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_v_ltable_size;
+  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_v_rtable_size;
+  GenerateRecomLists __pyx_v_generator;
+  std::vector<std::vector<int> >  __pyx_v_config_lists;
+  PyObject *__pyx_v_py_config_list = NULL;
+  PyObject *__pyx_v_tmp_list = NULL;
+  std::vector<int> ::size_type __pyx_v_j;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  Py_ssize_t __pyx_t_3;
+  PyObject *(*__pyx_t_4)(PyObject *);
+  int __pyx_t_5;
+  double __pyx_t_6;
+  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_t_7;
+  std::vector<std::vector<int> > ::size_type __pyx_t_8;
+  std::vector<int> ::size_type __pyx_t_9;
+  std::vector<int> ::size_type __pyx_t_10;
+  int __pyx_t_11;
+  __Pyx_RefNannySetupContext("debugblocker_config_cython", 0);
+
+  /* "debugblock/debugblocker_cython.pyx":136
+ *     ### Convert py objs to c++ objs
+ *     cdef vector[int] ltoken_sum, rtoken_sum
+ *     convert_py_list_to_vector(ltable_field_token_sum, ltoken_sum)             # <<<<<<<<<<<<<<
+ *     convert_py_list_to_vector(rtable_field_token_sum, rtoken_sum)
+ * 
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(__pyx_v_ltable_field_token_sum, __pyx_v_ltoken_sum);
+
+  /* "debugblock/debugblocker_cython.pyx":137
+ *     cdef vector[int] ltoken_sum, rtoken_sum
+ *     convert_py_list_to_vector(ltable_field_token_sum, ltoken_sum)
+ *     convert_py_list_to_vector(rtable_field_token_sum, rtoken_sum)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef vector[int] field_list
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(__pyx_v_rtable_field_token_sum, __pyx_v_rtoken_sum);
+
+  /* "debugblock/debugblocker_cython.pyx":140
+ * 
+ *     cdef vector[int] field_list
+ *     for i in range(py_num_fields):             # <<<<<<<<<<<<<<
+ *         field_list.push_back(i)
+ * 
+ */
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_v_py_num_fields);
+  __Pyx_GIVEREF(__pyx_v_py_num_fields);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_py_num_fields);
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
+    __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
+    __pyx_t_4 = NULL;
+  } else {
+    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 140, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_4)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 140, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      } else {
+        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 140, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      }
+    } else {
+      __pyx_t_2 = __pyx_t_4(__pyx_t_1);
+      if (unlikely(!__pyx_t_2)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 140, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_2);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":141
+ *     cdef vector[int] field_list
+ *     for i in range(py_num_fields):
+ *         field_list.push_back(i)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO
+ */
+    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_i); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
+    try {
+      __pyx_v_field_list.push_back(__pyx_t_5);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 141, __pyx_L1_error)
+    }
+
+    /* "debugblock/debugblocker_cython.pyx":140
+ * 
+ *     cdef vector[int] field_list
+ *     for i in range(py_num_fields):             # <<<<<<<<<<<<<<
+ *         field_list.push_back(i)
+ * 
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":143
+ *         field_list.push_back(i)
+ * 
+ *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO             # <<<<<<<<<<<<<<
+ * 
+ *     cdef int max_field_num = field_list.size()
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_FIELD_REMOVE_RATIO); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 143, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_field_remove_ratio = __pyx_t_6;
+
+  /* "debugblock/debugblocker_cython.pyx":145
+ *     cdef double field_remove_ratio = FIELD_REMOVE_RATIO
+ * 
+ *     cdef int max_field_num = field_list.size()             # <<<<<<<<<<<<<<
+ *     cdef uint ltable_size = py_ltable_size
+ *     cdef uint rtable_size = py_rtable_size
+ */
+  __pyx_v_max_field_num = __pyx_v_field_list.size();
+
+  /* "debugblock/debugblocker_cython.pyx":146
+ * 
+ *     cdef int max_field_num = field_list.size()
+ *     cdef uint ltable_size = py_ltable_size             # <<<<<<<<<<<<<<
+ *     cdef uint rtable_size = py_rtable_size
+ * 
+ */
+  __pyx_t_7 = __Pyx_PyInt_As_unsigned_int(__pyx_v_py_ltable_size); if (unlikely((__pyx_t_7 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_v_ltable_size = __pyx_t_7;
+
+  /* "debugblock/debugblocker_cython.pyx":147
+ *     cdef int max_field_num = field_list.size()
+ *     cdef uint ltable_size = py_ltable_size
+ *     cdef uint rtable_size = py_rtable_size             # <<<<<<<<<<<<<<
+ * 
+ *     cdef GenerateRecomLists generator
+ */
+  __pyx_t_7 = __Pyx_PyInt_As_unsigned_int(__pyx_v_py_rtable_size); if (unlikely((__pyx_t_7 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L1_error)
+  __pyx_v_rtable_size = __pyx_t_7;
+
+  /* "debugblock/debugblocker_cython.pyx":152
+ * 
+ *     cdef vector[vector[int]] config_lists;
+ *     config_lists = generator.generate_config(field_list, ltoken_sum, rtoken_sum,             # <<<<<<<<<<<<<<
+ *                                             field_remove_ratio,
+ *                                             ltable_size, rtable_size);
+ */
+  __pyx_v_config_lists = __pyx_v_generator.generate_config(__pyx_v_field_list, __pyx_v_ltoken_sum, __pyx_v_rtoken_sum, __pyx_v_field_remove_ratio, __pyx_v_ltable_size, __pyx_v_rtable_size);
+
+  /* "debugblock/debugblocker_cython.pyx":155
+ *                                             field_remove_ratio,
+ *                                             ltable_size, rtable_size);
+ *     py_config_list = []             # <<<<<<<<<<<<<<
+ *     for i in range(config_lists.size()):
+ *         tmp_list = []
+ */
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_py_config_list = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":156
+ *                                             ltable_size, rtable_size);
+ *     py_config_list = []
+ *     for i in range(config_lists.size()):             # <<<<<<<<<<<<<<
+ *         tmp_list = []
+ *         for j in range(config_lists[i].size()):
+ */
+  __pyx_t_1 = __Pyx_PyInt_FromSize_t(__pyx_v_config_lists.size()); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
+    __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_3 = 0;
+    __pyx_t_4 = NULL;
+  } else {
+    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_4 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 156, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_4)) {
+      if (likely(PyList_CheckExact(__pyx_t_2))) {
+        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 156, __pyx_L1_error)
+        #else
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        #endif
+      } else {
+        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_1); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 156, __pyx_L1_error)
+        #else
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        #endif
+      }
+    } else {
+      __pyx_t_1 = __pyx_t_4(__pyx_t_2);
+      if (unlikely(!__pyx_t_1)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 156, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_1);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_1);
+    __pyx_t_1 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":157
+ *     py_config_list = []
+ *     for i in range(config_lists.size()):
+ *         tmp_list = []             # <<<<<<<<<<<<<<
+ *         for j in range(config_lists[i].size()):
+ *             tmp_list.append(config_lists[i][j])
+ */
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_XDECREF_SET(__pyx_v_tmp_list, ((PyObject*)__pyx_t_1));
+    __pyx_t_1 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":158
+ *     for i in range(config_lists.size()):
+ *         tmp_list = []
+ *         for j in range(config_lists[i].size()):             # <<<<<<<<<<<<<<
+ *             tmp_list.append(config_lists[i][j])
+ *         py_config_list.append(tmp_list)
+ */
+    __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 158, __pyx_L1_error)
+    __pyx_t_9 = (__pyx_v_config_lists[__pyx_t_8]).size();
+    for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
+      __pyx_v_j = __pyx_t_10;
+
+      /* "debugblock/debugblocker_cython.pyx":159
+ *         tmp_list = []
+ *         for j in range(config_lists[i].size()):
+ *             tmp_list.append(config_lists[i][j])             # <<<<<<<<<<<<<<
+ *         py_config_list.append(tmp_list)
+ * 
+ */
+      __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 159, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_From_int(((__pyx_v_config_lists[__pyx_t_8])[__pyx_v_j])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_tmp_list, __pyx_t_1); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 159, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    }
+
+    /* "debugblock/debugblocker_cython.pyx":160
+ *         for j in range(config_lists[i].size()):
+ *             tmp_list.append(config_lists[i][j])
+ *         py_config_list.append(tmp_list)             # <<<<<<<<<<<<<<
+ * 
+ *     return py_config_list
+ */
+    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_py_config_list, __pyx_v_tmp_list); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 160, __pyx_L1_error)
+
+    /* "debugblock/debugblocker_cython.pyx":156
+ *                                             ltable_size, rtable_size);
+ *     py_config_list = []
+ *     for i in range(config_lists.size()):             # <<<<<<<<<<<<<<
+ *         tmp_list = []
+ *         for j in range(config_lists[i].size()):
+ */
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":162
+ *         py_config_list.append(tmp_list)
+ * 
+ *     return py_config_list             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_py_config_list);
+  __pyx_r = __pyx_v_py_config_list;
+  goto __pyx_L0;
+
+  /* "debugblock/debugblocker_cython.pyx":131
+ *     return py_rec_list
+ * 
+ * def debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, py_cand_set,             # <<<<<<<<<<<<<<
+ *                         py_num_fields, py_ltable_size, py_rtable_size):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_config_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_i);
+  __Pyx_XDECREF(__pyx_v_py_config_list);
+  __Pyx_XDECREF(__pyx_v_tmp_list);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "debugblock/debugblocker_cython.pyx":165
+ * 
+ * 
+ * def debugblocker_topk_cython(py_config, lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         py_cand_set, py_output_size):
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_7debugblocker_topk_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10debugblock_19debugblocker_cython_7debugblocker_topk_cython = {"debugblocker_topk_cython", (PyCFunction)__pyx_pw_10debugblock_19debugblocker_cython_7debugblocker_topk_cython, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_7debugblocker_topk_cython(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_py_config = 0;
+  PyObject *__pyx_v_lrecord_token_list = 0;
+  PyObject *__pyx_v_rrecord_token_list = 0;
+  PyObject *__pyx_v_lrecord_index_list = 0;
+  PyObject *__pyx_v_rrecord_index_list = 0;
+  PyObject *__pyx_v_py_cand_set = 0;
+  PyObject *__pyx_v_py_output_size = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("debugblocker_topk_cython (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_py_config,&__pyx_n_s_lrecord_token_list,&__pyx_n_s_rrecord_token_list,&__pyx_n_s_lrecord_index_list,&__pyx_n_s_rrecord_index_list,&__pyx_n_s_py_cand_set,&__pyx_n_s_py_output_size,0};
+    PyObject* values[7] = {0,0,0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+        CYTHON_FALLTHROUGH;
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_config)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lrecord_token_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_topk_cython", 1, 7, 7, 1); __PYX_ERR(0, 165, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rrecord_token_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_topk_cython", 1, 7, 7, 2); __PYX_ERR(0, 165, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lrecord_index_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_topk_cython", 1, 7, 7, 3); __PYX_ERR(0, 165, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rrecord_index_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_topk_cython", 1, 7, 7, 4); __PYX_ERR(0, 165, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_cand_set)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_topk_cython", 1, 7, 7, 5); __PYX_ERR(0, 165, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  6:
+        if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_py_output_size)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("debugblocker_topk_cython", 1, 7, 7, 6); __PYX_ERR(0, 165, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "debugblocker_topk_cython") < 0)) __PYX_ERR(0, 165, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+      values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+    }
+    __pyx_v_py_config = values[0];
+    __pyx_v_lrecord_token_list = values[1];
+    __pyx_v_rrecord_token_list = values[2];
+    __pyx_v_lrecord_index_list = values[3];
+    __pyx_v_rrecord_index_list = values[4];
+    __pyx_v_py_cand_set = values[5];
+    __pyx_v_py_output_size = values[6];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("debugblocker_topk_cython", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 165, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_topk_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_10debugblock_19debugblocker_cython_6debugblocker_topk_cython(__pyx_self, __pyx_v_py_config, __pyx_v_lrecord_token_list, __pyx_v_rrecord_token_list, __pyx_v_lrecord_index_list, __pyx_v_rrecord_index_list, __pyx_v_py_cand_set, __pyx_v_py_output_size);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_6debugblocker_topk_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_py_config, PyObject *__pyx_v_lrecord_token_list, PyObject *__pyx_v_rrecord_token_list, PyObject *__pyx_v_lrecord_index_list, PyObject *__pyx_v_rrecord_index_list, PyObject *__pyx_v_py_cand_set, PyObject *__pyx_v_py_output_size) {
+  std::vector<int>  __pyx_v_config;
+  std::vector<std::vector<int> >  __pyx_v_ltoken_vector;
+  std::vector<std::vector<int> >  __pyx_v_rtoken_vector;
+  std::vector<std::vector<int> >  __pyx_v_lindex_vector;
+  std::vector<std::vector<int> >  __pyx_v_rindex_vector;
+  std::map<int,std::set<int> >  __pyx_v_cand_set;
+  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_v_output_size;
+  GenerateRecomLists __pyx_v_generator;
+  std::map<std::pair<int,int> ,int>  __pyx_v_rec_list;
+  PyObject *__pyx_v_py_rec_list = NULL;
+  std::pair<std::pair<int,int> ,int>  __pyx_v_it;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __pyx_t_10debugblock_19debugblocker_cython_uint __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  std::map<std::pair<int,int> ,int> ::iterator __pyx_t_3;
+  std::pair<std::pair<int,int> ,int>  __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  int __pyx_t_8;
+  __Pyx_RefNannySetupContext("debugblocker_topk_cython", 0);
+  __Pyx_INCREF(__pyx_v_lrecord_token_list);
+  __Pyx_INCREF(__pyx_v_rrecord_token_list);
+  __Pyx_INCREF(__pyx_v_lrecord_index_list);
+  __Pyx_INCREF(__pyx_v_rrecord_index_list);
+  __Pyx_INCREF(__pyx_v_py_cand_set);
+
+  /* "debugblock/debugblocker_cython.pyx":171
+ *     ### Convert py objs to c++ objs
+ *     cdef vector[int] config
+ *     convert_py_list_to_vector(py_config, config)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef vector[vector[int]] ltoken_vector, rtoken_vector
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(__pyx_v_py_config, __pyx_v_config);
+
+  /* "debugblock/debugblocker_cython.pyx":174
+ * 
+ *     cdef vector[vector[int]] ltoken_vector, rtoken_vector
+ *     convert_table_to_vector(lrecord_token_list, ltoken_vector)             # <<<<<<<<<<<<<<
+ *     convert_table_to_vector(rrecord_token_list, rtoken_vector)
+ * 
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_lrecord_token_list, __pyx_v_ltoken_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":175
+ *     cdef vector[vector[int]] ltoken_vector, rtoken_vector
+ *     convert_table_to_vector(lrecord_token_list, ltoken_vector)
+ *     convert_table_to_vector(rrecord_token_list, rtoken_vector)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef vector[vector[int]] lindex_vector, rindex_vector
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_rrecord_token_list, __pyx_v_rtoken_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":178
+ * 
+ *     cdef vector[vector[int]] lindex_vector, rindex_vector
+ *     convert_table_to_vector(lrecord_index_list, lindex_vector)             # <<<<<<<<<<<<<<
+ *     convert_table_to_vector(rrecord_index_list, rindex_vector)
+ * 
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_lrecord_index_list, __pyx_v_lindex_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":179
+ *     cdef vector[vector[int]] lindex_vector, rindex_vector
+ *     convert_table_to_vector(lrecord_index_list, lindex_vector)
+ *     convert_table_to_vector(rrecord_index_list, rindex_vector)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef cmap[int, cset[int]] cand_set
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(__pyx_v_rrecord_index_list, __pyx_v_rindex_vector);
+
+  /* "debugblock/debugblocker_cython.pyx":182
+ * 
+ *     cdef cmap[int, cset[int]] cand_set
+ *     convert_candidate_set_to_c_map(py_cand_set, cand_set)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef uint output_size = py_output_size
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_c_map(__pyx_v_py_cand_set, __pyx_v_cand_set);
+
+  /* "debugblock/debugblocker_cython.pyx":184
+ *     convert_candidate_set_to_c_map(py_cand_set, cand_set)
+ * 
+ *     cdef uint output_size = py_output_size             # <<<<<<<<<<<<<<
+ * 
+ *     del lrecord_token_list, rrecord_token_list
+ */
+  __pyx_t_1 = __Pyx_PyInt_As_unsigned_int(__pyx_v_py_output_size); if (unlikely((__pyx_t_1 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 184, __pyx_L1_error)
+  __pyx_v_output_size = __pyx_t_1;
+
+  /* "debugblock/debugblocker_cython.pyx":186
+ *     cdef uint output_size = py_output_size
+ * 
+ *     del lrecord_token_list, rrecord_token_list             # <<<<<<<<<<<<<<
+ *     del lrecord_index_list, rrecord_index_list
+ *     del py_cand_set
+ */
+  __Pyx_DECREF(__pyx_v_lrecord_token_list);
+  __pyx_v_lrecord_token_list = NULL;
+  __Pyx_DECREF(__pyx_v_rrecord_token_list);
+  __pyx_v_rrecord_token_list = NULL;
+
+  /* "debugblock/debugblocker_cython.pyx":187
+ * 
+ *     del lrecord_token_list, rrecord_token_list
+ *     del lrecord_index_list, rrecord_index_list             # <<<<<<<<<<<<<<
+ *     del py_cand_set
+ * 
+ */
+  __Pyx_DECREF(__pyx_v_lrecord_index_list);
+  __pyx_v_lrecord_index_list = NULL;
+  __Pyx_DECREF(__pyx_v_rrecord_index_list);
+  __pyx_v_rrecord_index_list = NULL;
+
+  /* "debugblock/debugblocker_cython.pyx":188
+ *     del lrecord_token_list, rrecord_token_list
+ *     del lrecord_index_list, rrecord_index_list
+ *     del py_cand_set             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_DECREF(__pyx_v_py_cand_set);
+  __pyx_v_py_cand_set = NULL;
+
+  /* "debugblock/debugblocker_cython.pyx":194
+ * 
+ *     cdef cmap[cpair[int, int], int] rec_list;
+ *     rec_list = generator.generate_topk_with_config(config, ltoken_vector, rtoken_vector,             # <<<<<<<<<<<<<<
+ *                               lindex_vector, rindex_vector, cand_set, output_size);
+ * 
+ */
+  __pyx_v_rec_list = __pyx_v_generator.generate_topk_with_config(__pyx_v_config, __pyx_v_ltoken_vector, __pyx_v_rtoken_vector, __pyx_v_lindex_vector, __pyx_v_rindex_vector, __pyx_v_cand_set, __pyx_v_output_size);
+
+  /* "debugblock/debugblocker_cython.pyx":197
+ *                               lindex_vector, rindex_vector, cand_set, output_size);
+ * 
+ *     py_rec_list = []             # <<<<<<<<<<<<<<
+ *     for it in rec_list:
+ *         py_rec_list.append([it.first.first, it.first.second, it.second])
+ */
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_v_py_rec_list = ((PyObject*)__pyx_t_2);
+  __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":198
+ * 
+ *     py_rec_list = []
+ *     for it in rec_list:             # <<<<<<<<<<<<<<
+ *         py_rec_list.append([it.first.first, it.first.second, it.second])
+ * 
+ */
+  __pyx_t_3 = __pyx_v_rec_list.begin();
+  for (;;) {
+    if (!(__pyx_t_3 != __pyx_v_rec_list.end())) break;
+    __pyx_t_4 = *__pyx_t_3;
+    ++__pyx_t_3;
+    __pyx_v_it = __pyx_t_4;
+
+    /* "debugblock/debugblocker_cython.pyx":199
+ *     py_rec_list = []
+ *     for it in rec_list:
+ *         py_rec_list.append([it.first.first, it.first.second, it.second])             # <<<<<<<<<<<<<<
+ * 
+ *     return py_rec_list
+ */
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_it.first.first); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 199, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_it.first.second); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 199, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_it.second); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 199, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_7 = PyList_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 199, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyList_SET_ITEM(__pyx_t_7, 0, __pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_5);
+    PyList_SET_ITEM(__pyx_t_7, 1, __pyx_t_5);
+    __Pyx_GIVEREF(__pyx_t_6);
+    PyList_SET_ITEM(__pyx_t_7, 2, __pyx_t_6);
+    __pyx_t_2 = 0;
+    __pyx_t_5 = 0;
+    __pyx_t_6 = 0;
+    __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_py_rec_list, __pyx_t_7); if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 199, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":198
+ * 
+ *     py_rec_list = []
+ *     for it in rec_list:             # <<<<<<<<<<<<<<
+ *         py_rec_list.append([it.first.first, it.first.second, it.second])
+ * 
+ */
+  }
+
+  /* "debugblock/debugblocker_cython.pyx":201
+ *         py_rec_list.append([it.first.first, it.first.second, it.second])
+ * 
+ *     return py_rec_list             # <<<<<<<<<<<<<<
+ * 
+ * def debugblocker_merge_topk_cython(py_rec_lists):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_py_rec_list);
+  __pyx_r = __pyx_v_py_rec_list;
+  goto __pyx_L0;
+
+  /* "debugblock/debugblocker_cython.pyx":165
+ * 
+ * 
+ * def debugblocker_topk_cython(py_config, lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         py_cand_set, py_output_size):
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_topk_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_py_rec_list);
   __Pyx_XDECREF(__pyx_v_lrecord_token_list);
   __Pyx_XDECREF(__pyx_v_rrecord_token_list);
@@ -1704,7 +3215,430 @@ static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_debugblocker_cython
   return __pyx_r;
 }
 
-/* "debugblock/debugblocker_cython.pyx":87
+/* "debugblock/debugblocker_cython.pyx":203
+ *     return py_rec_list
+ * 
+ * def debugblocker_merge_topk_cython(py_rec_lists):             # <<<<<<<<<<<<<<
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists
+ *     convert_py_list_to_vector_map(py_rec_lists, rec_lists)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_9debugblocker_merge_topk_cython(PyObject *__pyx_self, PyObject *__pyx_v_py_rec_lists); /*proto*/
+static PyMethodDef __pyx_mdef_10debugblock_19debugblocker_cython_9debugblocker_merge_topk_cython = {"debugblocker_merge_topk_cython", (PyCFunction)__pyx_pw_10debugblock_19debugblocker_cython_9debugblocker_merge_topk_cython, METH_O, 0};
+static PyObject *__pyx_pw_10debugblock_19debugblocker_cython_9debugblocker_merge_topk_cython(PyObject *__pyx_self, PyObject *__pyx_v_py_rec_lists) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("debugblocker_merge_topk_cython (wrapper)", 0);
+  __pyx_r = __pyx_pf_10debugblock_19debugblocker_cython_8debugblocker_merge_topk_cython(__pyx_self, ((PyObject *)__pyx_v_py_rec_lists));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_10debugblock_19debugblocker_cython_8debugblocker_merge_topk_cython(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_py_rec_lists) {
+  std::vector<std::map<std::pair<int,int> ,int> >  __pyx_v_rec_lists;
+  GenerateRecomLists __pyx_v_generator;
+  std::vector<RecPair>  __pyx_v_rec_list;
+  PyObject *__pyx_v_py_rec_list = NULL;
+  std::vector<RecPair> ::size_type __pyx_v_i;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  std::vector<RecPair> ::size_type __pyx_t_2;
+  std::vector<RecPair> ::size_type __pyx_t_3;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  __Pyx_RefNannySetupContext("debugblocker_merge_topk_cython", 0);
+
+  /* "debugblock/debugblocker_cython.pyx":205
+ * def debugblocker_merge_topk_cython(py_rec_lists):
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists
+ *     convert_py_list_to_vector_map(py_rec_lists, rec_lists)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef GenerateRecomLists generator
+ */
+  __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector_map(__pyx_v_py_rec_lists, __pyx_v_rec_lists);
+
+  /* "debugblock/debugblocker_cython.pyx":210
+ * 
+ *     cdef vector[RecPair] rec_list;
+ *     rec_list = generator.merge_topk_lists(rec_lists);             # <<<<<<<<<<<<<<
+ * 
+ *     py_rec_list = []
+ */
+  __pyx_v_rec_list = __pyx_v_generator.merge_topk_lists(__pyx_v_rec_lists);
+
+  /* "debugblock/debugblocker_cython.pyx":212
+ *     rec_list = generator.merge_topk_lists(rec_lists);
+ * 
+ *     py_rec_list = []             # <<<<<<<<<<<<<<
+ *     for i in xrange(rec_list.size()):
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+ */
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_py_rec_list = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":213
+ * 
+ *     py_rec_list = []
+ *     for i in xrange(rec_list.size()):             # <<<<<<<<<<<<<<
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+ * 
+ */
+  __pyx_t_2 = __pyx_v_rec_list.size();
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "debugblock/debugblocker_cython.pyx":214
+ *     py_rec_list = []
+ *     for i in xrange(rec_list.size()):
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))             # <<<<<<<<<<<<<<
+ * 
+ *     return py_rec_list
+ */
+    __pyx_t_1 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_v_i]).rank); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 214, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_4 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_v_i]).l_rec); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 214, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_5 = __Pyx_PyInt_From_int((__pyx_v_rec_list[__pyx_v_i]).r_rec); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 214, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_6 = PyTuple_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 214, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_1);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_4);
+    __Pyx_GIVEREF(__pyx_t_5);
+    PyTuple_SET_ITEM(__pyx_t_6, 2, __pyx_t_5);
+    __pyx_t_1 = 0;
+    __pyx_t_4 = 0;
+    __pyx_t_5 = 0;
+    __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_py_rec_list, __pyx_t_6); if (unlikely(__pyx_t_7 == -1)) __PYX_ERR(0, 214, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  }
+
+  /* "debugblock/debugblocker_cython.pyx":216
+ *         py_rec_list.append((rec_list[i].rank, rec_list[i].l_rec, rec_list[i].r_rec))
+ * 
+ *     return py_rec_list             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_py_rec_list);
+  __pyx_r = __pyx_v_py_rec_list;
+  goto __pyx_L0;
+
+  /* "debugblock/debugblocker_cython.pyx":203
+ *     return py_rec_list
+ * 
+ * def debugblocker_merge_topk_cython(py_rec_lists):             # <<<<<<<<<<<<<<
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists
+ *     convert_py_list_to_vector_map(py_rec_lists, rec_lists)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("debugblock.debugblocker_cython.debugblocker_merge_topk_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_py_rec_list);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "debugblock/debugblocker_cython.pyx":220
+ * 
+ * 
+ * cdef void convert_py_list_to_vector_map(py_rec_lists,             # <<<<<<<<<<<<<<
+ *         vector[cmap[cpair[int, int], int]]& rec_lists):
+ *     cdef cmap[cpair[int, int], int] rec_list
+ */
+
+static void __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector_map(PyObject *__pyx_v_py_rec_lists, std::vector<std::map<std::pair<int,int> ,int> >  &__pyx_v_rec_lists) {
+  std::map<std::pair<int,int> ,int>  __pyx_v_rec_list;
+  PyObject *__pyx_v_py_rec_list = NULL;
+  PyObject *__pyx_v_l_rec = NULL;
+  PyObject *__pyx_v_r_rec = NULL;
+  PyObject *__pyx_v_rank = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  Py_ssize_t __pyx_t_2;
+  PyObject *(*__pyx_t_3)(PyObject *);
+  PyObject *__pyx_t_4 = NULL;
+  Py_ssize_t __pyx_t_5;
+  PyObject *(*__pyx_t_6)(PyObject *);
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *(*__pyx_t_12)(PyObject *);
+  int __pyx_t_13;
+  std::pair<int,int>  __pyx_t_14;
+  __Pyx_RefNannySetupContext("convert_py_list_to_vector_map", 0);
+
+  /* "debugblock/debugblocker_cython.pyx":223
+ *         vector[cmap[cpair[int, int], int]]& rec_lists):
+ *     cdef cmap[cpair[int, int], int] rec_list
+ *     for py_rec_list in py_rec_lists:             # <<<<<<<<<<<<<<
+ *         for l_rec, r_rec, rank in py_rec_list:
+ *             rec_list[[l_rec, r_rec]] = rank
+ */
+  if (likely(PyList_CheckExact(__pyx_v_py_rec_lists)) || PyTuple_CheckExact(__pyx_v_py_rec_lists)) {
+    __pyx_t_1 = __pyx_v_py_rec_lists; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
+    __pyx_t_3 = NULL;
+  } else {
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_py_rec_lists); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+  }
+  for (;;) {
+    if (likely(!__pyx_t_3)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 223, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 223, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      } else {
+        if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 223, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 223, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      }
+    } else {
+      __pyx_t_4 = __pyx_t_3(__pyx_t_1);
+      if (unlikely(!__pyx_t_4)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 223, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_4);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_py_rec_list, __pyx_t_4);
+    __pyx_t_4 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":224
+ *     cdef cmap[cpair[int, int], int] rec_list
+ *     for py_rec_list in py_rec_lists:
+ *         for l_rec, r_rec, rank in py_rec_list:             # <<<<<<<<<<<<<<
+ *             rec_list[[l_rec, r_rec]] = rank
+ *         rec_lists.push_back(rec_list)
+ */
+    if (likely(PyList_CheckExact(__pyx_v_py_rec_list)) || PyTuple_CheckExact(__pyx_v_py_rec_list)) {
+      __pyx_t_4 = __pyx_v_py_rec_list; __Pyx_INCREF(__pyx_t_4); __pyx_t_5 = 0;
+      __pyx_t_6 = NULL;
+    } else {
+      __pyx_t_5 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_py_rec_list); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 224, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_6 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 224, __pyx_L1_error)
+    }
+    for (;;) {
+      if (likely(!__pyx_t_6)) {
+        if (likely(PyList_CheckExact(__pyx_t_4))) {
+          if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_4)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_7 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_7); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 224, __pyx_L1_error)
+          #else
+          __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 224, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_7);
+          #endif
+        } else {
+          if (__pyx_t_5 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_7); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 224, __pyx_L1_error)
+          #else
+          __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 224, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_7);
+          #endif
+        }
+      } else {
+        __pyx_t_7 = __pyx_t_6(__pyx_t_4);
+        if (unlikely(!__pyx_t_7)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+            else __PYX_ERR(0, 224, __pyx_L1_error)
+          }
+          break;
+        }
+        __Pyx_GOTREF(__pyx_t_7);
+      }
+      if ((likely(PyTuple_CheckExact(__pyx_t_7))) || (PyList_CheckExact(__pyx_t_7))) {
+        PyObject* sequence = __pyx_t_7;
+        #if !CYTHON_COMPILING_IN_PYPY
+        Py_ssize_t size = Py_SIZE(sequence);
+        #else
+        Py_ssize_t size = PySequence_Size(sequence);
+        #endif
+        if (unlikely(size != 3)) {
+          if (size > 3) __Pyx_RaiseTooManyValuesError(3);
+          else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+          __PYX_ERR(0, 224, __pyx_L1_error)
+        }
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        if (likely(PyTuple_CheckExact(sequence))) {
+          __pyx_t_8 = PyTuple_GET_ITEM(sequence, 0); 
+          __pyx_t_9 = PyTuple_GET_ITEM(sequence, 1); 
+          __pyx_t_10 = PyTuple_GET_ITEM(sequence, 2); 
+        } else {
+          __pyx_t_8 = PyList_GET_ITEM(sequence, 0); 
+          __pyx_t_9 = PyList_GET_ITEM(sequence, 1); 
+          __pyx_t_10 = PyList_GET_ITEM(sequence, 2); 
+        }
+        __Pyx_INCREF(__pyx_t_8);
+        __Pyx_INCREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_10);
+        #else
+        __pyx_t_8 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 224, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_8);
+        __pyx_t_9 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 224, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_10 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 224, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_10);
+        #endif
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      } else {
+        Py_ssize_t index = -1;
+        __pyx_t_11 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 224, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
+        index = 0; __pyx_t_8 = __pyx_t_12(__pyx_t_11); if (unlikely(!__pyx_t_8)) goto __pyx_L7_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_8);
+        index = 1; __pyx_t_9 = __pyx_t_12(__pyx_t_11); if (unlikely(!__pyx_t_9)) goto __pyx_L7_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_9);
+        index = 2; __pyx_t_10 = __pyx_t_12(__pyx_t_11); if (unlikely(!__pyx_t_10)) goto __pyx_L7_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_10);
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 3) < 0) __PYX_ERR(0, 224, __pyx_L1_error)
+        __pyx_t_12 = NULL;
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        goto __pyx_L8_unpacking_done;
+        __pyx_L7_unpacking_failed:;
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __pyx_t_12 = NULL;
+        if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+        __PYX_ERR(0, 224, __pyx_L1_error)
+        __pyx_L8_unpacking_done:;
+      }
+      __Pyx_XDECREF_SET(__pyx_v_l_rec, __pyx_t_8);
+      __pyx_t_8 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_r_rec, __pyx_t_9);
+      __pyx_t_9 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_rank, __pyx_t_10);
+      __pyx_t_10 = 0;
+
+      /* "debugblock/debugblocker_cython.pyx":225
+ *     for py_rec_list in py_rec_lists:
+ *         for l_rec, r_rec, rank in py_rec_list:
+ *             rec_list[[l_rec, r_rec]] = rank             # <<<<<<<<<<<<<<
+ *         rec_lists.push_back(rec_list)
+ *         rec_list.clear()
+ */
+      __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_v_rank); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+      __pyx_t_7 = PyList_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 225, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_7);
+      __Pyx_INCREF(__pyx_v_l_rec);
+      __Pyx_GIVEREF(__pyx_v_l_rec);
+      PyList_SET_ITEM(__pyx_t_7, 0, __pyx_v_l_rec);
+      __Pyx_INCREF(__pyx_v_r_rec);
+      __Pyx_GIVEREF(__pyx_v_r_rec);
+      PyList_SET_ITEM(__pyx_t_7, 1, __pyx_v_r_rec);
+      __pyx_t_14 = __pyx_convert_pair_from_py_int__and_int(__pyx_t_7); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      (__pyx_v_rec_list[__pyx_t_14]) = __pyx_t_13;
+
+      /* "debugblock/debugblocker_cython.pyx":224
+ *     cdef cmap[cpair[int, int], int] rec_list
+ *     for py_rec_list in py_rec_lists:
+ *         for l_rec, r_rec, rank in py_rec_list:             # <<<<<<<<<<<<<<
+ *             rec_list[[l_rec, r_rec]] = rank
+ *         rec_lists.push_back(rec_list)
+ */
+    }
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+    /* "debugblock/debugblocker_cython.pyx":226
+ *         for l_rec, r_rec, rank in py_rec_list:
+ *             rec_list[[l_rec, r_rec]] = rank
+ *         rec_lists.push_back(rec_list)             # <<<<<<<<<<<<<<
+ *         rec_list.clear()
+ * 
+ */
+    try {
+      __pyx_v_rec_lists.push_back(__pyx_v_rec_list);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 226, __pyx_L1_error)
+    }
+
+    /* "debugblock/debugblocker_cython.pyx":227
+ *             rec_list[[l_rec, r_rec]] = rank
+ *         rec_lists.push_back(rec_list)
+ *         rec_list.clear()             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    __pyx_v_rec_list.clear();
+
+    /* "debugblock/debugblocker_cython.pyx":223
+ *         vector[cmap[cpair[int, int], int]]& rec_lists):
+ *     cdef cmap[cpair[int, int], int] rec_list
+ *     for py_rec_list in py_rec_lists:             # <<<<<<<<<<<<<<
+ *         for l_rec, r_rec, rank in py_rec_list:
+ *             rec_list[[l_rec, r_rec]] = rank
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":220
+ * 
+ * 
+ * cdef void convert_py_list_to_vector_map(py_rec_lists,             # <<<<<<<<<<<<<<
+ *         vector[cmap[cpair[int, int], int]]& rec_lists):
+ *     cdef cmap[cpair[int, int], int] rec_list
+ */
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_WriteUnraisable("debugblock.debugblocker_cython.convert_py_list_to_vector_map", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_py_rec_list);
+  __Pyx_XDECREF(__pyx_v_l_rec);
+  __Pyx_XDECREF(__pyx_v_r_rec);
+  __Pyx_XDECREF(__pyx_v_rank);
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "debugblock/debugblocker_cython.pyx":230
  * 
  * 
  * cdef void convert_table_to_vector(table_list, vector[vector[int]]& table_vector):             # <<<<<<<<<<<<<<
@@ -1726,18 +3660,18 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(P
   int __pyx_t_8;
   __Pyx_RefNannySetupContext("convert_table_to_vector", 0);
 
-  /* "debugblock/debugblocker_cython.pyx":89
+  /* "debugblock/debugblocker_cython.pyx":232
  * cdef void convert_table_to_vector(table_list, vector[vector[int]]& table_vector):
  *     cdef int i, j
  *     for i in range(len(table_list)):             # <<<<<<<<<<<<<<
  *         table_vector.push_back(vector[int]())
  *         for j in range(len(table_list[i])):
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_table_list); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_v_table_list); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 232, __pyx_L1_error)
   for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "debugblock/debugblocker_cython.pyx":90
+    /* "debugblock/debugblocker_cython.pyx":233
  *     cdef int i, j
  *     for i in range(len(table_list)):
  *         table_vector.push_back(vector[int]())             # <<<<<<<<<<<<<<
@@ -1748,53 +3682,53 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(P
       __pyx_t_3 = std::vector<int> ();
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 90, __pyx_L1_error)
+      __PYX_ERR(0, 233, __pyx_L1_error)
     }
     try {
       __pyx_v_table_vector.push_back(__pyx_t_3);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 90, __pyx_L1_error)
+      __PYX_ERR(0, 233, __pyx_L1_error)
     }
 
-    /* "debugblock/debugblocker_cython.pyx":91
+    /* "debugblock/debugblocker_cython.pyx":234
  *     for i in range(len(table_list)):
  *         table_vector.push_back(vector[int]())
  *         for j in range(len(table_list[i])):             # <<<<<<<<<<<<<<
  *             table_vector[i].push_back(table_list[i][j])
  * 
  */
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_table_list, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_table_list, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_Length(__pyx_t_4); if (unlikely(__pyx_t_5 == -1)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_5 = PyObject_Length(__pyx_t_4); if (unlikely(__pyx_t_5 == -1)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "debugblock/debugblocker_cython.pyx":92
+      /* "debugblock/debugblocker_cython.pyx":235
  *         table_vector.push_back(vector[int]())
  *         for j in range(len(table_list[i])):
  *             table_vector[i].push_back(table_list[i][j])             # <<<<<<<<<<<<<<
  * 
  * 
  */
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_table_list, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_table_list, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 235, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 235, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_7); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_7); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 235, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       try {
         (__pyx_v_table_vector[__pyx_v_i]).push_back(__pyx_t_8);
       } catch(...) {
         __Pyx_CppExn2PyErr();
-        __PYX_ERR(0, 92, __pyx_L1_error)
+        __PYX_ERR(0, 235, __pyx_L1_error)
       }
     }
   }
 
-  /* "debugblock/debugblocker_cython.pyx":87
+  /* "debugblock/debugblocker_cython.pyx":230
  * 
  * 
  * cdef void convert_table_to_vector(table_list, vector[vector[int]]& table_vector):             # <<<<<<<<<<<<<<
@@ -1812,7 +3746,7 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_table_to_vector(P
   __Pyx_RefNannyFinishContext();
 }
 
-/* "debugblock/debugblocker_cython.pyx":95
+/* "debugblock/debugblocker_cython.pyx":238
  * 
  * 
  * cdef void convert_candidate_set_to_c_map(cand_set, cmap[int, cset[int]]& new_set):             # <<<<<<<<<<<<<<
@@ -1837,7 +3771,7 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
   PyObject *__pyx_t_10 = NULL;
   __Pyx_RefNannySetupContext("convert_candidate_set_to_c_map", 0);
 
-  /* "debugblock/debugblocker_cython.pyx":97
+  /* "debugblock/debugblocker_cython.pyx":240
  * cdef void convert_candidate_set_to_c_map(cand_set, cmap[int, cset[int]]& new_set):
  *     cdef int key, value
  *     for key in cand_set:             # <<<<<<<<<<<<<<
@@ -1848,26 +3782,26 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
     __pyx_t_1 = __pyx_v_cand_set; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_cand_set); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_cand_set); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 97, __pyx_L1_error)
+    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 240, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 97, __pyx_L1_error)
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 240, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 240, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       } else {
         if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 97, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 240, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 240, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       }
@@ -1877,17 +3811,17 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 97, __pyx_L1_error)
+          else __PYX_ERR(0, 240, __pyx_L1_error)
         }
         break;
       }
       __Pyx_GOTREF(__pyx_t_4);
     }
-    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 97, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 240, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_key = __pyx_t_5;
 
-    /* "debugblock/debugblocker_cython.pyx":98
+    /* "debugblock/debugblocker_cython.pyx":241
  *     cdef int key, value
  *     for key in cand_set:
  *         if not new_set.count(key):             # <<<<<<<<<<<<<<
@@ -1897,7 +3831,7 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
     __pyx_t_6 = ((!(__pyx_v_new_set.count(__pyx_v_key) != 0)) != 0);
     if (__pyx_t_6) {
 
-      /* "debugblock/debugblocker_cython.pyx":99
+      /* "debugblock/debugblocker_cython.pyx":242
  *     for key in cand_set:
  *         if not new_set.count(key):
  *             new_set[key] = cset[int]()             # <<<<<<<<<<<<<<
@@ -1908,11 +3842,11 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
         __pyx_t_7 = std::set<int> ();
       } catch(...) {
         __Pyx_CppExn2PyErr();
-        __PYX_ERR(0, 99, __pyx_L1_error)
+        __PYX_ERR(0, 242, __pyx_L1_error)
       }
       (__pyx_v_new_set[__pyx_v_key]) = __pyx_t_7;
 
-      /* "debugblock/debugblocker_cython.pyx":98
+      /* "debugblock/debugblocker_cython.pyx":241
  *     cdef int key, value
  *     for key in cand_set:
  *         if not new_set.count(key):             # <<<<<<<<<<<<<<
@@ -1921,19 +3855,19 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
  */
     }
 
-    /* "debugblock/debugblocker_cython.pyx":101
+    /* "debugblock/debugblocker_cython.pyx":244
  *             new_set[key] = cset[int]()
  * 
  *         l = cand_set[key]             # <<<<<<<<<<<<<<
  *         for value in l:
  *             new_set[key].insert(value)
  */
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_cand_set, __pyx_v_key, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_cand_set, __pyx_v_key, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 244, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_l, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "debugblock/debugblocker_cython.pyx":102
+    /* "debugblock/debugblocker_cython.pyx":245
  * 
  *         l = cand_set[key]
  *         for value in l:             # <<<<<<<<<<<<<<
@@ -1944,26 +3878,26 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
       __pyx_t_4 = __pyx_v_l; __Pyx_INCREF(__pyx_t_4); __pyx_t_8 = 0;
       __pyx_t_9 = NULL;
     } else {
-      __pyx_t_8 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_l); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 102, __pyx_L1_error)
+      __pyx_t_8 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_l); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 245, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_9 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 102, __pyx_L1_error)
+      __pyx_t_9 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 245, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_9)) {
         if (likely(PyList_CheckExact(__pyx_t_4))) {
           if (__pyx_t_8 >= PyList_GET_SIZE(__pyx_t_4)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_10 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_8); __Pyx_INCREF(__pyx_t_10); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 102, __pyx_L1_error)
+          __pyx_t_10 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_8); __Pyx_INCREF(__pyx_t_10); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 245, __pyx_L1_error)
           #else
-          __pyx_t_10 = PySequence_ITEM(__pyx_t_4, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 102, __pyx_L1_error)
+          __pyx_t_10 = PySequence_ITEM(__pyx_t_4, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 245, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
           #endif
         } else {
           if (__pyx_t_8 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_10 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_8); __Pyx_INCREF(__pyx_t_10); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 102, __pyx_L1_error)
+          __pyx_t_10 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_8); __Pyx_INCREF(__pyx_t_10); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 245, __pyx_L1_error)
           #else
-          __pyx_t_10 = PySequence_ITEM(__pyx_t_4, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 102, __pyx_L1_error)
+          __pyx_t_10 = PySequence_ITEM(__pyx_t_4, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 245, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
           #endif
         }
@@ -1973,17 +3907,17 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 102, __pyx_L1_error)
+            else __PYX_ERR(0, 245, __pyx_L1_error)
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_10);
       }
-      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_10); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 102, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_10); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 245, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __pyx_v_value = __pyx_t_5;
 
-      /* "debugblock/debugblocker_cython.pyx":103
+      /* "debugblock/debugblocker_cython.pyx":246
  *         l = cand_set[key]
  *         for value in l:
  *             new_set[key].insert(value)             # <<<<<<<<<<<<<<
@@ -1994,10 +3928,10 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
         (__pyx_v_new_set[__pyx_v_key]).insert(__pyx_v_value);
       } catch(...) {
         __Pyx_CppExn2PyErr();
-        __PYX_ERR(0, 103, __pyx_L1_error)
+        __PYX_ERR(0, 246, __pyx_L1_error)
       }
 
-      /* "debugblock/debugblocker_cython.pyx":102
+      /* "debugblock/debugblocker_cython.pyx":245
  * 
  *         l = cand_set[key]
  *         for value in l:             # <<<<<<<<<<<<<<
@@ -2007,7 +3941,7 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "debugblock/debugblocker_cython.pyx":97
+    /* "debugblock/debugblocker_cython.pyx":240
  * cdef void convert_candidate_set_to_c_map(cand_set, cmap[int, cset[int]]& new_set):
  *     cdef int key, value
  *     for key in cand_set:             # <<<<<<<<<<<<<<
@@ -2017,7 +3951,7 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "debugblock/debugblocker_cython.pyx":95
+  /* "debugblock/debugblocker_cython.pyx":238
  * 
  * 
  * cdef void convert_candidate_set_to_c_map(cand_set, cmap[int, cset[int]]& new_set):             # <<<<<<<<<<<<<<
@@ -2037,7 +3971,7 @@ static void __pyx_f_10debugblock_19debugblocker_cython_convert_candidate_set_to_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "debugblock/debugblocker_cython.pyx":106
+/* "debugblock/debugblocker_cython.pyx":249
  * 
  * 
  * cdef int convert_py_list_to_vector(py_list, vector[int]& vector):             # <<<<<<<<<<<<<<
@@ -2056,7 +3990,7 @@ static int __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("convert_py_list_to_vector", 0);
 
-  /* "debugblock/debugblocker_cython.pyx":107
+  /* "debugblock/debugblocker_cython.pyx":250
  * 
  * cdef int convert_py_list_to_vector(py_list, vector[int]& vector):
  *     for value in py_list:             # <<<<<<<<<<<<<<
@@ -2066,26 +4000,26 @@ static int __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(
     __pyx_t_1 = __pyx_v_py_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_py_list); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_py_list); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 250, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 107, __pyx_L1_error)
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 250, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 250, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       } else {
         if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 107, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 250, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 250, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       }
@@ -2095,7 +4029,7 @@ static int __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 107, __pyx_L1_error)
+          else __PYX_ERR(0, 250, __pyx_L1_error)
         }
         break;
       }
@@ -2104,20 +4038,20 @@ static int __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(
     __Pyx_XDECREF_SET(__pyx_v_value, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "debugblock/debugblocker_cython.pyx":108
+    /* "debugblock/debugblocker_cython.pyx":251
  * cdef int convert_py_list_to_vector(py_list, vector[int]& vector):
  *     for value in py_list:
  *         vector.push_back(value)             # <<<<<<<<<<<<<<
  */
-    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_value); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 108, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_value); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 251, __pyx_L1_error)
     try {
       __pyx_v_vector.push_back(__pyx_t_5);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 108, __pyx_L1_error)
+      __PYX_ERR(0, 251, __pyx_L1_error)
     }
 
-    /* "debugblock/debugblocker_cython.pyx":107
+    /* "debugblock/debugblocker_cython.pyx":250
  * 
  * cdef int convert_py_list_to_vector(py_list, vector[int]& vector):
  *     for value in py_list:             # <<<<<<<<<<<<<<
@@ -2126,7 +4060,7 @@ static int __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "debugblock/debugblocker_cython.pyx":106
+  /* "debugblock/debugblocker_cython.pyx":249
  * 
  * 
  * cdef int convert_py_list_to_vector(py_list, vector[int]& vector):             # <<<<<<<<<<<<<<
@@ -2144,6 +4078,360 @@ static int __pyx_f_10debugblock_19debugblocker_cython_convert_py_list_to_vector(
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_value);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "pair.to_py":158
+ * 
+ * @cname("__pyx_convert_pair_to_py_int____int")
+ * cdef object __pyx_convert_pair_to_py_int____int(const pair[X,Y]& p):             # <<<<<<<<<<<<<<
+ *     return p.first, p.second
+ * 
+ */
+
+static PyObject *__pyx_convert_pair_to_py_int____int(std::pair<int,int>  const &__pyx_v_p) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  __Pyx_RefNannySetupContext("__pyx_convert_pair_to_py_int____int", 0);
+
+  /* "pair.to_py":159
+ * @cname("__pyx_convert_pair_to_py_int____int")
+ * cdef object __pyx_convert_pair_to_py_int____int(const pair[X,Y]& p):
+ *     return p.first, p.second             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_p.first); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 159, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_p.second); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 159, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 159, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_2);
+  __pyx_t_1 = 0;
+  __pyx_t_2 = 0;
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
+  goto __pyx_L0;
+
+  /* "pair.to_py":158
+ * 
+ * @cname("__pyx_convert_pair_to_py_int____int")
+ * cdef object __pyx_convert_pair_to_py_int____int(const pair[X,Y]& p):             # <<<<<<<<<<<<<<
+ *     return p.first, p.second
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("pair.to_py.__pyx_convert_pair_to_py_int____int", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "map.to_py":201
+ * 
+ * @cname("__pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int")
+ * cdef object __pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int(const map[X,Y]& s):             # <<<<<<<<<<<<<<
+ *     o = {}
+ *     cdef const map[X,Y].value_type *key_value
+ */
+
+static PyObject *__pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int(std::map<std::pair<int,int> ,int>  const &__pyx_v_s) {
+  PyObject *__pyx_v_o = NULL;
+  std::map<std::pair<int,int> ,int> ::value_type const *__pyx_v_key_value;
+  std::map<std::pair<int,int> ,int> ::const_iterator __pyx_v_iter;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  __Pyx_RefNannySetupContext("__pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int", 0);
+
+  /* "map.to_py":202
+ * @cname("__pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int")
+ * cdef object __pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int(const map[X,Y]& s):
+ *     o = {}             # <<<<<<<<<<<<<<
+ *     cdef const map[X,Y].value_type *key_value
+ *     cdef map[X,Y].const_iterator iter = s.begin()
+ */
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_o = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "map.to_py":204
+ *     o = {}
+ *     cdef const map[X,Y].value_type *key_value
+ *     cdef map[X,Y].const_iterator iter = s.begin()             # <<<<<<<<<<<<<<
+ *     while iter != s.end():
+ *         key_value = &cython.operator.dereference(iter)
+ */
+  __pyx_v_iter = __pyx_v_s.begin();
+
+  /* "map.to_py":205
+ *     cdef const map[X,Y].value_type *key_value
+ *     cdef map[X,Y].const_iterator iter = s.begin()
+ *     while iter != s.end():             # <<<<<<<<<<<<<<
+ *         key_value = &cython.operator.dereference(iter)
+ *         o[key_value.first] = key_value.second
+ */
+  while (1) {
+    __pyx_t_2 = ((__pyx_v_iter != __pyx_v_s.end()) != 0);
+    if (!__pyx_t_2) break;
+
+    /* "map.to_py":206
+ *     cdef map[X,Y].const_iterator iter = s.begin()
+ *     while iter != s.end():
+ *         key_value = &cython.operator.dereference(iter)             # <<<<<<<<<<<<<<
+ *         o[key_value.first] = key_value.second
+ *         cython.operator.preincrement(iter)
+ */
+    __pyx_v_key_value = (&(*__pyx_v_iter));
+
+    /* "map.to_py":207
+ *     while iter != s.end():
+ *         key_value = &cython.operator.dereference(iter)
+ *         o[key_value.first] = key_value.second             # <<<<<<<<<<<<<<
+ *         cython.operator.preincrement(iter)
+ *     return o
+ */
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_key_value->second); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 207, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __pyx_convert_pair_to_py_int____int(__pyx_v_key_value->first); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 207, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (unlikely(PyDict_SetItem(__pyx_v_o, __pyx_t_3, __pyx_t_1) < 0)) __PYX_ERR(1, 207, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+    /* "map.to_py":208
+ *         key_value = &cython.operator.dereference(iter)
+ *         o[key_value.first] = key_value.second
+ *         cython.operator.preincrement(iter)             # <<<<<<<<<<<<<<
+ *     return o
+ * 
+ */
+    (++__pyx_v_iter);
+  }
+
+  /* "map.to_py":209
+ *         o[key_value.first] = key_value.second
+ *         cython.operator.preincrement(iter)
+ *     return o             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_o);
+  __pyx_r = __pyx_v_o;
+  goto __pyx_L0;
+
+  /* "map.to_py":201
+ * 
+ * @cname("__pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int")
+ * cdef object __pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int(const map[X,Y]& s):             # <<<<<<<<<<<<<<
+ *     o = {}
+ *     cdef const map[X,Y].value_type *key_value
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("map.to_py.__pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_o);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "vector.to_py":60
+ * 
+ * @cname("__pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___")
+ * cdef object __pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___(vector[X]& v):             # <<<<<<<<<<<<<<
+ *     return [v[i] for i in range(v.size())]
+ * 
+ */
+
+static PyObject *__pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___(const std::vector<std::map<std::pair<int,int> ,int> >  &__pyx_v_v) {
+  size_t __pyx_v_i;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  size_t __pyx_t_2;
+  size_t __pyx_t_3;
+  PyObject *__pyx_t_4 = NULL;
+  __Pyx_RefNannySetupContext("__pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___", 0);
+
+  /* "vector.to_py":61
+ * @cname("__pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___")
+ * cdef object __pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___(vector[X]& v):
+ *     return [v[i] for i in range(v.size())]             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __pyx_v_v.size();
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+    __pyx_t_4 = __pyx_convert_map_to_py_std_3a__3a_pair_3c_int_2c_int_3e_______int((__pyx_v_v[__pyx_v_i])); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 61, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(1, 61, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  }
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "vector.to_py":60
+ * 
+ * @cname("__pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___")
+ * cdef object __pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___(vector[X]& v):             # <<<<<<<<<<<<<<
+ *     return [v[i] for i in range(v.size())]
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("vector.to_py.__pyx_convert_vector_to_py_std_3a__3a_map_3c_std_3a__3a_pair_3c_int_2c_int_3e____2c_int_3e___", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "pair.from_py":145
+ * 
+ * @cname("__pyx_convert_pair_from_py_int__and_int")
+ * cdef pair[X,Y] __pyx_convert_pair_from_py_int__and_int(object o) except *:             # <<<<<<<<<<<<<<
+ *     x, y = o
+ *     return pair[X,Y](<X>x, <Y>y)
+ */
+
+static std::pair<int,int>  __pyx_convert_pair_from_py_int__and_int(PyObject *__pyx_v_o) {
+  PyObject *__pyx_v_x = NULL;
+  PyObject *__pyx_v_y = NULL;
+  std::pair<int,int>  __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *(*__pyx_t_4)(PyObject *);
+  int __pyx_t_5;
+  int __pyx_t_6;
+  __Pyx_RefNannySetupContext("__pyx_convert_pair_from_py_int__and_int", 0);
+
+  /* "pair.from_py":146
+ * @cname("__pyx_convert_pair_from_py_int__and_int")
+ * cdef pair[X,Y] __pyx_convert_pair_from_py_int__and_int(object o) except *:
+ *     x, y = o             # <<<<<<<<<<<<<<
+ *     return pair[X,Y](<X>x, <Y>y)
+ * 
+ */
+  if ((likely(PyTuple_CheckExact(__pyx_v_o))) || (PyList_CheckExact(__pyx_v_o))) {
+    PyObject* sequence = __pyx_v_o;
+    #if !CYTHON_COMPILING_IN_PYPY
+    Py_ssize_t size = Py_SIZE(sequence);
+    #else
+    Py_ssize_t size = PySequence_Size(sequence);
+    #endif
+    if (unlikely(size != 2)) {
+      if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+      else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+      __PYX_ERR(1, 146, __pyx_L1_error)
+    }
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    if (likely(PyTuple_CheckExact(sequence))) {
+      __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
+      __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1); 
+    } else {
+      __pyx_t_1 = PyList_GET_ITEM(sequence, 0); 
+      __pyx_t_2 = PyList_GET_ITEM(sequence, 1); 
+    }
+    __Pyx_INCREF(__pyx_t_1);
+    __Pyx_INCREF(__pyx_t_2);
+    #else
+    __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 146, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 146, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    #endif
+  } else {
+    Py_ssize_t index = -1;
+    __pyx_t_3 = PyObject_GetIter(__pyx_v_o); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 146, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = Py_TYPE(__pyx_t_3)->tp_iternext;
+    index = 0; __pyx_t_1 = __pyx_t_4(__pyx_t_3); if (unlikely(!__pyx_t_1)) goto __pyx_L3_unpacking_failed;
+    __Pyx_GOTREF(__pyx_t_1);
+    index = 1; __pyx_t_2 = __pyx_t_4(__pyx_t_3); if (unlikely(!__pyx_t_2)) goto __pyx_L3_unpacking_failed;
+    __Pyx_GOTREF(__pyx_t_2);
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_4(__pyx_t_3), 2) < 0) __PYX_ERR(1, 146, __pyx_L1_error)
+    __pyx_t_4 = NULL;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    goto __pyx_L4_unpacking_done;
+    __pyx_L3_unpacking_failed:;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_4 = NULL;
+    if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+    __PYX_ERR(1, 146, __pyx_L1_error)
+    __pyx_L4_unpacking_done:;
+  }
+  __pyx_v_x = __pyx_t_1;
+  __pyx_t_1 = 0;
+  __pyx_v_y = __pyx_t_2;
+  __pyx_t_2 = 0;
+
+  /* "pair.from_py":147
+ * cdef pair[X,Y] __pyx_convert_pair_from_py_int__and_int(object o) except *:
+ *     x, y = o
+ *     return pair[X,Y](<X>x, <Y>y)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_x); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 147, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_v_y); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 147, __pyx_L1_error)
+  __pyx_r = std::pair<int,int> (((int)__pyx_t_5), ((int)__pyx_t_6));
+  goto __pyx_L0;
+
+  /* "pair.from_py":145
+ * 
+ * @cname("__pyx_convert_pair_from_py_int__and_int")
+ * cdef pair[X,Y] __pyx_convert_pair_from_py_int__and_int(object o) except *:             # <<<<<<<<<<<<<<
+ *     x, y = o
+ *     return pair[X,Y](<X>x, <Y>y)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("pair.from_py.__pyx_convert_pair_from_py_int__and_int", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_pretend_to_initialize(&__pyx_r);
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_x);
+  __Pyx_XDECREF(__pyx_v_y);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -2172,11 +4460,19 @@ static struct PyModuleDef __pyx_moduledef = {
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_FIELD_REMOVE_RATIO, __pyx_k_FIELD_REMOVE_RATIO, sizeof(__pyx_k_FIELD_REMOVE_RATIO), 0, 0, 1, 1},
+  {&__pyx_n_s_Parallel, __pyx_k_Parallel, sizeof(__pyx_k_Parallel), 0, 0, 1, 1},
   {&__pyx_n_s_cand_set, __pyx_k_cand_set, sizeof(__pyx_k_cand_set), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
+  {&__pyx_n_s_config, __pyx_k_config, sizeof(__pyx_k_config), 0, 0, 1, 1},
+  {&__pyx_n_s_config_lists, __pyx_k_config_lists, sizeof(__pyx_k_config_lists), 0, 0, 1, 1},
   {&__pyx_n_s_debugblock_debugblocker_cython, __pyx_k_debugblock_debugblocker_cython, sizeof(__pyx_k_debugblock_debugblocker_cython), 0, 0, 1, 1},
+  {&__pyx_n_s_debugblocker_config_cython, __pyx_k_debugblocker_config_cython, sizeof(__pyx_k_debugblocker_config_cython), 0, 0, 1, 1},
   {&__pyx_n_s_debugblocker_cython, __pyx_k_debugblocker_cython, sizeof(__pyx_k_debugblocker_cython), 0, 0, 1, 1},
+  {&__pyx_n_s_debugblocker_cython_old, __pyx_k_debugblocker_cython_old, sizeof(__pyx_k_debugblocker_cython_old), 0, 0, 1, 1},
   {&__pyx_kp_s_debugblocker_cython_pyx, __pyx_k_debugblocker_cython_pyx, sizeof(__pyx_k_debugblocker_cython_pyx), 0, 0, 1, 0},
+  {&__pyx_n_s_debugblocker_merge_topk_cython, __pyx_k_debugblocker_merge_topk_cython, sizeof(__pyx_k_debugblocker_merge_topk_cython), 0, 0, 1, 1},
+  {&__pyx_n_s_debugblocker_topk_cython, __pyx_k_debugblocker_topk_cython, sizeof(__pyx_k_debugblocker_topk_cython), 0, 0, 1, 1},
+  {&__pyx_n_s_delayed, __pyx_k_delayed, sizeof(__pyx_k_delayed), 0, 0, 1, 1},
   {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
   {&__pyx_n_s_field_list, __pyx_k_field_list, sizeof(__pyx_k_field_list), 0, 0, 1, 1},
   {&__pyx_n_s_field_remove_ratio, __pyx_k_field_remove_ratio, sizeof(__pyx_k_field_remove_ratio), 0, 0, 1, 1},
@@ -2184,10 +4480,14 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_generator, __pyx_k_generator, sizeof(__pyx_k_generator), 0, 0, 1, 1},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
+  {&__pyx_n_s_it, __pyx_k_it, sizeof(__pyx_k_it), 0, 0, 1, 1},
+  {&__pyx_n_s_j, __pyx_k_j, sizeof(__pyx_k_j), 0, 0, 1, 1},
+  {&__pyx_n_s_joblib, __pyx_k_joblib, sizeof(__pyx_k_joblib), 0, 0, 1, 1},
   {&__pyx_n_s_lindex_vector, __pyx_k_lindex_vector, sizeof(__pyx_k_lindex_vector), 0, 0, 1, 1},
   {&__pyx_n_s_lrecord_index_list, __pyx_k_lrecord_index_list, sizeof(__pyx_k_lrecord_index_list), 0, 0, 1, 1},
   {&__pyx_n_s_lrecord_token_list, __pyx_k_lrecord_token_list, sizeof(__pyx_k_lrecord_token_list), 0, 0, 1, 1},
   {&__pyx_n_s_ltable_field_token_sum, __pyx_k_ltable_field_token_sum, sizeof(__pyx_k_ltable_field_token_sum), 0, 0, 1, 1},
+  {&__pyx_n_s_ltable_size, __pyx_k_ltable_size, sizeof(__pyx_k_ltable_size), 0, 0, 1, 1},
   {&__pyx_n_s_ltoken_sum, __pyx_k_ltoken_sum, sizeof(__pyx_k_ltoken_sum), 0, 0, 1, 1},
   {&__pyx_n_s_ltoken_vector, __pyx_k_ltoken_vector, sizeof(__pyx_k_ltoken_vector), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
@@ -2195,28 +4495,37 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_output_size, __pyx_k_output_size, sizeof(__pyx_k_output_size), 0, 0, 1, 1},
   {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_s_py_cand_set, __pyx_k_py_cand_set, sizeof(__pyx_k_py_cand_set), 0, 0, 1, 1},
+  {&__pyx_n_s_py_config, __pyx_k_py_config, sizeof(__pyx_k_py_config), 0, 0, 1, 1},
+  {&__pyx_n_s_py_config_list, __pyx_k_py_config_list, sizeof(__pyx_k_py_config_list), 0, 0, 1, 1},
+  {&__pyx_n_s_py_config_lists, __pyx_k_py_config_lists, sizeof(__pyx_k_py_config_lists), 0, 0, 1, 1},
+  {&__pyx_n_s_py_ltable_size, __pyx_k_py_ltable_size, sizeof(__pyx_k_py_ltable_size), 0, 0, 1, 1},
   {&__pyx_n_s_py_num_fields, __pyx_k_py_num_fields, sizeof(__pyx_k_py_num_fields), 0, 0, 1, 1},
   {&__pyx_n_s_py_output_size, __pyx_k_py_output_size, sizeof(__pyx_k_py_output_size), 0, 0, 1, 1},
   {&__pyx_n_s_py_rec_list, __pyx_k_py_rec_list, sizeof(__pyx_k_py_rec_list), 0, 0, 1, 1},
+  {&__pyx_n_s_py_rec_lists, __pyx_k_py_rec_lists, sizeof(__pyx_k_py_rec_lists), 0, 0, 1, 1},
+  {&__pyx_n_s_py_rtable_size, __pyx_k_py_rtable_size, sizeof(__pyx_k_py_rtable_size), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_rec_list, __pyx_k_rec_list, sizeof(__pyx_k_rec_list), 0, 0, 1, 1},
+  {&__pyx_n_s_rec_lists, __pyx_k_rec_lists, sizeof(__pyx_k_rec_lists), 0, 0, 1, 1},
   {&__pyx_n_s_rindex_vector, __pyx_k_rindex_vector, sizeof(__pyx_k_rindex_vector), 0, 0, 1, 1},
   {&__pyx_n_s_rrecord_index_list, __pyx_k_rrecord_index_list, sizeof(__pyx_k_rrecord_index_list), 0, 0, 1, 1},
   {&__pyx_n_s_rrecord_token_list, __pyx_k_rrecord_token_list, sizeof(__pyx_k_rrecord_token_list), 0, 0, 1, 1},
   {&__pyx_n_s_rtable_field_token_sum, __pyx_k_rtable_field_token_sum, sizeof(__pyx_k_rtable_field_token_sum), 0, 0, 1, 1},
+  {&__pyx_n_s_rtable_size, __pyx_k_rtable_size, sizeof(__pyx_k_rtable_size), 0, 0, 1, 1},
   {&__pyx_n_s_rtoken_sum, __pyx_k_rtoken_sum, sizeof(__pyx_k_rtoken_sum), 0, 0, 1, 1},
   {&__pyx_n_s_rtoken_vector, __pyx_k_rtoken_vector, sizeof(__pyx_k_rtoken_vector), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_time, __pyx_k_time, sizeof(__pyx_k_time), 0, 0, 1, 1},
+  {&__pyx_n_s_tmp_list, __pyx_k_tmp_list, sizeof(__pyx_k_tmp_list), 0, 0, 1, 1},
   {&__pyx_n_s_xrange, __pyx_k_xrange, sizeof(__pyx_k_xrange), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 67, __pyx_L1_error)
   #if PY_MAJOR_VERSION >= 3
-  __pyx_builtin_xrange = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_xrange) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_builtin_xrange = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_xrange) __PYX_ERR(0, 89, __pyx_L1_error)
   #else
-  __pyx_builtin_xrange = __Pyx_GetBuiltinName(__pyx_n_s_xrange); if (!__pyx_builtin_xrange) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_builtin_xrange = __Pyx_GetBuiltinName(__pyx_n_s_xrange); if (!__pyx_builtin_xrange) __PYX_ERR(0, 89, __pyx_L1_error)
   #endif
   return 0;
   __pyx_L1_error:;
@@ -2227,17 +4536,65 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "debugblock/debugblocker_cython.pyx":37
- * FIELD_REMOVE_RATIO = 0.1
+  /* "debugblock/debugblocker_cython.pyx":45
+ * 
+ * 
+ * def debugblocker_cython_old(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
+ */
+  __pyx_tuple_ = PyTuple_Pack(26, __pyx_n_s_lrecord_token_list, __pyx_n_s_rrecord_token_list, __pyx_n_s_lrecord_index_list, __pyx_n_s_rrecord_index_list, __pyx_n_s_ltable_field_token_sum, __pyx_n_s_rtable_field_token_sum, __pyx_n_s_py_cand_set, __pyx_n_s_py_num_fields, __pyx_n_s_py_output_size, __pyx_n_s_ltoken_vector, __pyx_n_s_rtoken_vector, __pyx_n_s_lindex_vector, __pyx_n_s_rindex_vector, __pyx_n_s_ltoken_sum, __pyx_n_s_rtoken_sum, __pyx_n_s_cand_set, __pyx_n_s_field_list, __pyx_n_s_i, __pyx_n_s_output_size, __pyx_n_s_field_remove_ratio, __pyx_n_s_max_field_num, __pyx_n_s_generator, __pyx_n_s_config_lists, __pyx_n_s_rec_lists, __pyx_n_s_rec_list, __pyx_n_s_py_rec_list); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple_);
+  __Pyx_GIVEREF(__pyx_tuple_);
+  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(9, 0, 26, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_debugblocker_cython_pyx, __pyx_n_s_debugblocker_cython_old, 45, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 45, __pyx_L1_error)
+
+  /* "debugblock/debugblocker_cython.pyx":105
+ * 
  * 
  * def debugblocker_cython(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
  *                         lrecord_index_list, rrecord_index_list,
  *                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
  */
-  __pyx_tuple_ = PyTuple_Pack(24, __pyx_n_s_lrecord_token_list, __pyx_n_s_rrecord_token_list, __pyx_n_s_lrecord_index_list, __pyx_n_s_rrecord_index_list, __pyx_n_s_ltable_field_token_sum, __pyx_n_s_rtable_field_token_sum, __pyx_n_s_py_cand_set, __pyx_n_s_py_num_fields, __pyx_n_s_py_output_size, __pyx_n_s_ltoken_vector, __pyx_n_s_rtoken_vector, __pyx_n_s_lindex_vector, __pyx_n_s_rindex_vector, __pyx_n_s_ltoken_sum, __pyx_n_s_rtoken_sum, __pyx_n_s_cand_set, __pyx_n_s_field_list, __pyx_n_s_i, __pyx_n_s_output_size, __pyx_n_s_field_remove_ratio, __pyx_n_s_max_field_num, __pyx_n_s_generator, __pyx_n_s_rec_list, __pyx_n_s_py_rec_list); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 37, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple_);
-  __Pyx_GIVEREF(__pyx_tuple_);
-  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(9, 0, 24, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_debugblocker_cython_pyx, __pyx_n_s_debugblocker_cython, 37, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 37, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(13, __pyx_n_s_lrecord_token_list, __pyx_n_s_rrecord_token_list, __pyx_n_s_lrecord_index_list, __pyx_n_s_rrecord_index_list, __pyx_n_s_ltable_field_token_sum, __pyx_n_s_rtable_field_token_sum, __pyx_n_s_py_cand_set, __pyx_n_s_py_num_fields, __pyx_n_s_py_output_size, __pyx_n_s_py_config_lists, __pyx_n_s_rec_lists, __pyx_n_s_i, __pyx_n_s_py_rec_list); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(9, 0, 13, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_debugblocker_cython_pyx, __pyx_n_s_debugblocker_cython, 105, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 105, __pyx_L1_error)
+
+  /* "debugblock/debugblocker_cython.pyx":131
+ *     return py_rec_list
+ * 
+ * def debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, py_cand_set,             # <<<<<<<<<<<<<<
+ *                         py_num_fields, py_ltable_size, py_rtable_size):
+ * 
+ */
+  __pyx_tuple__5 = PyTuple_Pack(19, __pyx_n_s_ltable_field_token_sum, __pyx_n_s_rtable_field_token_sum, __pyx_n_s_py_cand_set, __pyx_n_s_py_num_fields, __pyx_n_s_py_ltable_size, __pyx_n_s_py_rtable_size, __pyx_n_s_ltoken_sum, __pyx_n_s_rtoken_sum, __pyx_n_s_field_list, __pyx_n_s_i, __pyx_n_s_field_remove_ratio, __pyx_n_s_max_field_num, __pyx_n_s_ltable_size, __pyx_n_s_rtable_size, __pyx_n_s_generator, __pyx_n_s_config_lists, __pyx_n_s_py_config_list, __pyx_n_s_tmp_list, __pyx_n_s_j); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(6, 0, 19, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_debugblocker_cython_pyx, __pyx_n_s_debugblocker_config_cython, 131, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) __PYX_ERR(0, 131, __pyx_L1_error)
+
+  /* "debugblock/debugblocker_cython.pyx":165
+ * 
+ * 
+ * def debugblocker_topk_cython(py_config, lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         py_cand_set, py_output_size):
+ */
+  __pyx_tuple__7 = PyTuple_Pack(18, __pyx_n_s_py_config, __pyx_n_s_lrecord_token_list, __pyx_n_s_rrecord_token_list, __pyx_n_s_lrecord_index_list, __pyx_n_s_rrecord_index_list, __pyx_n_s_py_cand_set, __pyx_n_s_py_output_size, __pyx_n_s_config, __pyx_n_s_ltoken_vector, __pyx_n_s_rtoken_vector, __pyx_n_s_lindex_vector, __pyx_n_s_rindex_vector, __pyx_n_s_cand_set, __pyx_n_s_output_size, __pyx_n_s_generator, __pyx_n_s_rec_list, __pyx_n_s_py_rec_list, __pyx_n_s_it); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(7, 0, 18, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_debugblocker_cython_pyx, __pyx_n_s_debugblocker_topk_cython, 165, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 165, __pyx_L1_error)
+
+  /* "debugblock/debugblocker_cython.pyx":203
+ *     return py_rec_list
+ * 
+ * def debugblocker_merge_topk_cython(py_rec_lists):             # <<<<<<<<<<<<<<
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists
+ *     convert_py_list_to_vector_map(py_rec_lists, rec_lists)
+ */
+  __pyx_tuple__9 = PyTuple_Pack(6, __pyx_n_s_py_rec_lists, __pyx_n_s_rec_lists, __pyx_n_s_generator, __pyx_n_s_rec_list, __pyx_n_s_py_rec_list, __pyx_n_s_i); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_debugblocker_cython_pyx, __pyx_n_s_debugblocker_merge_topk_cython, 203, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 203, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -2269,6 +4626,7 @@ PyMODINIT_FUNC PyInit_debugblocker_cython(void)
 #endif
 {
   PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannyDeclarations
   #if CYTHON_REFNANNY
   __Pyx_RefNanny = __Pyx_RefNannyImportAPI("refnanny");
@@ -2357,7 +4715,7 @@ PyMODINIT_FUNC PyInit_debugblocker_cython(void)
  * from libc.stdio cimport printf, fprintf, fopen, fclose, FILE, sprintf
  * from cython.parallel import prange, parallel
  * import time             # <<<<<<<<<<<<<<
- * ctypedef unsigned int uint
+ * from joblib import Parallel, delayed
  * 
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_time, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
@@ -2365,42 +4723,127 @@ PyMODINIT_FUNC PyInit_debugblocker_cython(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_time, __pyx_t_1) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "debugblock/debugblocker_cython.pyx":35
- *                               cmap[int, cset[int]]& cand_set, uint output_size);
+  /* "debugblock/debugblocker_cython.pyx":11
+ * from cython.parallel import prange, parallel
+ * import time
+ * from joblib import Parallel, delayed             # <<<<<<<<<<<<<<
+ * 
+ * ctypedef unsigned int uint
+ */
+  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_n_s_Parallel);
+  __Pyx_GIVEREF(__pyx_n_s_Parallel);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Parallel);
+  __Pyx_INCREF(__pyx_n_s_delayed);
+  __Pyx_GIVEREF(__pyx_n_s_delayed);
+  PyList_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_delayed);
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_joblib, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_Parallel); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Parallel, __pyx_t_1) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_delayed); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_delayed, __pyx_t_1) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":42
+ * 
  * 
  * FIELD_REMOVE_RATIO = 0.1             # <<<<<<<<<<<<<<
  * 
- * def debugblocker_cython(lrecord_token_list, rrecord_token_list,
+ * 
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_FIELD_REMOVE_RATIO, __pyx_float_0_1) < 0) __PYX_ERR(0, 35, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_FIELD_REMOVE_RATIO, __pyx_float_0_1) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
 
-  /* "debugblock/debugblocker_cython.pyx":37
- * FIELD_REMOVE_RATIO = 0.1
+  /* "debugblock/debugblocker_cython.pyx":45
+ * 
+ * 
+ * def debugblocker_cython_old(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
+ */
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_10debugblock_19debugblocker_cython_1debugblocker_cython_old, NULL, __pyx_n_s_debugblock_debugblocker_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_debugblocker_cython_old, __pyx_t_2) < 0) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":105
+ * 
  * 
  * def debugblocker_cython(lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
  *                         lrecord_index_list, rrecord_index_list,
  *                         ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10debugblock_19debugblocker_cython_1debugblocker_cython, NULL, __pyx_n_s_debugblock_debugblocker_cython); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_debugblocker_cython, __pyx_t_1) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_10debugblock_19debugblocker_cython_3debugblocker_cython, NULL, __pyx_n_s_debugblock_debugblocker_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_debugblocker_cython, __pyx_t_2) < 0) __PYX_ERR(0, 105, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":131
+ *     return py_rec_list
+ * 
+ * def debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, py_cand_set,             # <<<<<<<<<<<<<<
+ *                         py_num_fields, py_ltable_size, py_rtable_size):
+ * 
+ */
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_10debugblock_19debugblocker_cython_5debugblocker_config_cython, NULL, __pyx_n_s_debugblock_debugblocker_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_debugblocker_config_cython, __pyx_t_2) < 0) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":165
+ * 
+ * 
+ * def debugblocker_topk_cython(py_config, lrecord_token_list, rrecord_token_list,             # <<<<<<<<<<<<<<
+ *                         lrecord_index_list, rrecord_index_list,
+ *                         py_cand_set, py_output_size):
+ */
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_10debugblock_19debugblocker_cython_7debugblocker_topk_cython, NULL, __pyx_n_s_debugblock_debugblocker_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_debugblocker_topk_cython, __pyx_t_2) < 0) __PYX_ERR(0, 165, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "debugblock/debugblocker_cython.pyx":203
+ *     return py_rec_list
+ * 
+ * def debugblocker_merge_topk_cython(py_rec_lists):             # <<<<<<<<<<<<<<
+ *     cdef vector[cmap[cpair[int, int], int]] rec_lists
+ *     convert_py_list_to_vector_map(py_rec_lists, rec_lists)
+ */
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_10debugblock_19debugblocker_cython_9debugblocker_merge_topk_cython, NULL, __pyx_n_s_debugblock_debugblocker_cython); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_debugblocker_merge_topk_cython, __pyx_t_2) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "debugblock/debugblocker_cython.pyx":1
  * from libcpp.vector cimport vector             # <<<<<<<<<<<<<<
  * from libcpp.set cimport set as cset
  * from libcpp.map cimport map as cmap
  */
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_2) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "pair.from_py":145
+ * 
+ * @cname("__pyx_convert_pair_from_py_int__and_int")
+ * cdef pair[X,Y] __pyx_convert_pair_from_py_int__and_int(object o) except *:             # <<<<<<<<<<<<<<
+ *     x, y = o
+ *     return pair[X,Y](<X>x, <Y>y)
+ */
 
   /*--- Wrapped vars code ---*/
 
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   if (__pyx_m) {
     if (__pyx_d) {
       __Pyx_AddTraceback("init debugblock.debugblocker_cython", 0, __pyx_lineno, __pyx_filename);
@@ -2630,6 +5073,149 @@ static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
     return result;
 }
 
+/* PyFunctionFastCall */
+  #if CYTHON_FAST_PYCALL
+#include "frameobject.h"
+static PyObject* __Pyx_PyFunction_FastCallNoKw(PyCodeObject *co, PyObject **args, Py_ssize_t na,
+                                               PyObject *globals) {
+    PyFrameObject *f;
+    PyThreadState *tstate = PyThreadState_GET();
+    PyObject **fastlocals;
+    Py_ssize_t i;
+    PyObject *result;
+    assert(globals != NULL);
+    /* XXX Perhaps we should create a specialized
+       PyFrame_New() that doesn't take locals, but does
+       take builtins without sanity checking them.
+       */
+    assert(tstate != NULL);
+    f = PyFrame_New(tstate, co, globals, NULL);
+    if (f == NULL) {
+        return NULL;
+    }
+    fastlocals = f->f_localsplus;
+    for (i = 0; i < na; i++) {
+        Py_INCREF(*args);
+        fastlocals[i] = *args++;
+    }
+    result = PyEval_EvalFrameEx(f,0);
+    ++tstate->recursion_depth;
+    Py_DECREF(f);
+    --tstate->recursion_depth;
+    return result;
+}
+#if 1 || PY_VERSION_HEX < 0x030600B1
+static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, int nargs, PyObject *kwargs) {
+    PyCodeObject *co = (PyCodeObject *)PyFunction_GET_CODE(func);
+    PyObject *globals = PyFunction_GET_GLOBALS(func);
+    PyObject *argdefs = PyFunction_GET_DEFAULTS(func);
+    PyObject *closure;
+#if PY_MAJOR_VERSION >= 3
+    PyObject *kwdefs;
+#endif
+    PyObject *kwtuple, **k;
+    PyObject **d;
+    Py_ssize_t nd;
+    Py_ssize_t nk;
+    PyObject *result;
+    assert(kwargs == NULL || PyDict_Check(kwargs));
+    nk = kwargs ? PyDict_Size(kwargs) : 0;
+    if (Py_EnterRecursiveCall((char*)" while calling a Python object")) {
+        return NULL;
+    }
+    if (
+#if PY_MAJOR_VERSION >= 3
+            co->co_kwonlyargcount == 0 &&
+#endif
+            likely(kwargs == NULL || nk == 0) &&
+            co->co_flags == (CO_OPTIMIZED | CO_NEWLOCALS | CO_NOFREE)) {
+        if (argdefs == NULL && co->co_argcount == nargs) {
+            result = __Pyx_PyFunction_FastCallNoKw(co, args, nargs, globals);
+            goto done;
+        }
+        else if (nargs == 0 && argdefs != NULL
+                 && co->co_argcount == Py_SIZE(argdefs)) {
+            /* function called with no arguments, but all parameters have
+               a default value: use default values as arguments .*/
+            args = &PyTuple_GET_ITEM(argdefs, 0);
+            result =__Pyx_PyFunction_FastCallNoKw(co, args, Py_SIZE(argdefs), globals);
+            goto done;
+        }
+    }
+    if (kwargs != NULL) {
+        Py_ssize_t pos, i;
+        kwtuple = PyTuple_New(2 * nk);
+        if (kwtuple == NULL) {
+            result = NULL;
+            goto done;
+        }
+        k = &PyTuple_GET_ITEM(kwtuple, 0);
+        pos = i = 0;
+        while (PyDict_Next(kwargs, &pos, &k[i], &k[i+1])) {
+            Py_INCREF(k[i]);
+            Py_INCREF(k[i+1]);
+            i += 2;
+        }
+        nk = i / 2;
+    }
+    else {
+        kwtuple = NULL;
+        k = NULL;
+    }
+    closure = PyFunction_GET_CLOSURE(func);
+#if PY_MAJOR_VERSION >= 3
+    kwdefs = PyFunction_GET_KW_DEFAULTS(func);
+#endif
+    if (argdefs != NULL) {
+        d = &PyTuple_GET_ITEM(argdefs, 0);
+        nd = Py_SIZE(argdefs);
+    }
+    else {
+        d = NULL;
+        nd = 0;
+    }
+#if PY_MAJOR_VERSION >= 3
+    result = PyEval_EvalCodeEx((PyObject*)co, globals, (PyObject *)NULL,
+                               args, nargs,
+                               k, (int)nk,
+                               d, (int)nd, kwdefs, closure);
+#else
+    result = PyEval_EvalCodeEx(co, globals, (PyObject *)NULL,
+                               args, nargs,
+                               k, (int)nk,
+                               d, (int)nd, closure);
+#endif
+    Py_XDECREF(kwtuple);
+done:
+    Py_LeaveRecursiveCall();
+    return result;
+}
+#endif
+#endif
+
+/* PyCFunctionFastCall */
+  #if CYTHON_FAST_PYCCALL
+static CYTHON_INLINE PyObject * __Pyx_PyCFunction_FastCall(PyObject *func_obj, PyObject **args, Py_ssize_t nargs) {
+    PyCFunctionObject *func = (PyCFunctionObject*)func_obj;
+    PyCFunction meth = PyCFunction_GET_FUNCTION(func);
+    PyObject *self = PyCFunction_GET_SELF(func);
+    int flags = PyCFunction_GET_FLAGS(func);
+    assert(PyCFunction_Check(func));
+    assert(METH_FASTCALL == (flags & ~(METH_CLASS | METH_STATIC | METH_COEXIST | METH_KEYWORDS)));
+    assert(nargs >= 0);
+    assert(nargs == 0 || args != NULL);
+    /* _PyCFunction_FastCallDict() must not be called with an exception set,
+       because it may clear it (directly or indirectly) and so the
+       caller loses its exception */
+    assert(!PyErr_Occurred());
+    if ((PY_VERSION_HEX < 0x030700A0) || unlikely(flags & METH_KEYWORDS)) {
+        return (*((__Pyx_PyCFunctionFastWithKeywords)meth)) (self, args, nargs, NULL);
+    } else {
+        return (*((__Pyx_PyCFunctionFast)meth)) (self, args, nargs);
+    }
+}
+#endif
+
 /* GetItemInt */
   static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
     PyObject *r;
@@ -2715,6 +5301,126 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
     }
 #endif
     return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+}
+
+/* PyObjectCallMethO */
+  #if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
+    PyObject *self, *result;
+    PyCFunction cfunc;
+    cfunc = PyCFunction_GET_FUNCTION(func);
+    self = PyCFunction_GET_SELF(func);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = cfunc(self, arg);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
+}
+#endif
+
+/* PyObjectCallOneArg */
+  #if CYTHON_COMPILING_IN_CPYTHON
+static PyObject* __Pyx__PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_New(1);
+    if (unlikely(!args)) return NULL;
+    Py_INCREF(arg);
+    PyTuple_SET_ITEM(args, 0, arg);
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+#if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(func)) {
+        return __Pyx_PyFunction_FastCall(func, &arg, 1);
+    }
+#endif
+    if (likely(PyCFunction_Check(func))) {
+        if (likely(PyCFunction_GET_FLAGS(func) & METH_O)) {
+            return __Pyx_PyObject_CallMethO(func, arg);
+#if CYTHON_FAST_PYCCALL
+        } else if (PyCFunction_GET_FLAGS(func) & METH_FASTCALL) {
+            return __Pyx_PyCFunction_FastCall(func, &arg, 1);
+#endif
+        }
+    }
+    return __Pyx__PyObject_CallOneArg(func, arg);
+}
+#else
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_Pack(1, arg);
+    if (unlikely(!args)) return NULL;
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+#endif
+
+/* RaiseTooManyValuesToUnpack */
+  static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
+    PyErr_Format(PyExc_ValueError,
+                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
+}
+
+/* RaiseNeedMoreValuesToUnpack */
+  static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
+    PyErr_Format(PyExc_ValueError,
+                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
+                 index, (index == 1) ? "" : "s");
+}
+
+/* IterFinish */
+  static CYTHON_INLINE int __Pyx_IterFinish(void) {
+#if CYTHON_FAST_THREAD_STATE
+    PyThreadState *tstate = PyThreadState_GET();
+    PyObject* exc_type = tstate->curexc_type;
+    if (unlikely(exc_type)) {
+        if (likely(exc_type == PyExc_StopIteration) || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)) {
+            PyObject *exc_value, *exc_tb;
+            exc_value = tstate->curexc_value;
+            exc_tb = tstate->curexc_traceback;
+            tstate->curexc_type = 0;
+            tstate->curexc_value = 0;
+            tstate->curexc_traceback = 0;
+            Py_DECREF(exc_type);
+            Py_XDECREF(exc_value);
+            Py_XDECREF(exc_tb);
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+#else
+    if (unlikely(PyErr_Occurred())) {
+        if (likely(PyErr_ExceptionMatches(PyExc_StopIteration))) {
+            PyErr_Clear();
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+#endif
+}
+
+/* UnpackItemEndCheck */
+  static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
+    if (unlikely(retval)) {
+        Py_DECREF(retval);
+        __Pyx_RaiseTooManyValuesError(expected);
+        return -1;
+    } else {
+        return __Pyx_IterFinish();
+    }
+    return 0;
 }
 
 /* PyErrFetchRestore */
@@ -2855,6 +5561,20 @@ bad:
     Py_XDECREF(empty_list);
     Py_XDECREF(empty_dict);
     return module;
+}
+
+/* ImportFrom */
+  static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
+    PyObject* value = __Pyx_PyObject_GetAttrStr(module, name);
+    if (unlikely(!value) && PyErr_ExceptionMatches(PyExc_AttributeError)) {
+        PyErr_Format(PyExc_ImportError,
+        #if PY_MAJOR_VERSION < 3
+            "cannot import name %.230s", PyString_AS_STRING(name));
+        #else
+            "cannot import name %S", name);
+        #endif
+    }
+    return value;
 }
 
 /* CLineInTraceback */
@@ -3079,6 +5799,37 @@ bad:
         return (target_type) value;\
     }
 
+/* CIntToPy */
+  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    const int neg_one = (int) -1, const_zero = (int) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(int) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(int) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(int),
+                                     little, !is_unsigned);
+    }
+}
+
 /* Print */
   #if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
 static PyObject *__Pyx_GetStdout(void) {
@@ -3184,37 +5935,6 @@ bad:
     return -1;
 }
 #endif
-
-/* CIntToPy */
-  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
-    const int neg_one = (int) -1, const_zero = (int) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(int) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(int) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-#endif
-        }
-    } else {
-        if (sizeof(int) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-#endif
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(int),
-                                     little, !is_unsigned);
-    }
-}
 
 /* CIntFromPy */
   static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
