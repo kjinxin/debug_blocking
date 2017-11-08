@@ -17,6 +17,7 @@ from joblib import Parallel, delayed
 import py_entitymatching as em
 import sys
 import cloudpickle
+import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -188,8 +189,8 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
                         new_formatted_candidate_set, len(feature_list), output_size)
     print('Ending Cython Parallel {0}'.format(time.time()))
     print "rec list in python!"
-    #for i in xrange(len(rec_list)):
-    #    print rec_list[i]
+    for i in xrange(len(rec_list)):
+        print rec_list[i]
 
     total_end = time.time()
     total_time = total_end - total_start
@@ -199,16 +200,21 @@ def debug_blocker(ltable, rtable, candidate_set, output_size=200, attr_corres=No
     #print ret_dataframe
     return total_time
 
-def debugblocker_topk_cython_wrapper(config, lrecord_token_list, rrecord_token_list,
-        lrecord_index_list, rrecord_index_list, py_cand_set,
+def debugblocker_topk_cython_wrapper(config, lrecord_token_list,
+        rrecord_token_list, lrecord_index_list, rrecord_index_list, py_cand_set,
         py_output_size):
         
-        print('Trying {0}, time: {1}'.format(config, time.time()))
-        tmp = debugblocker_topk_cython(config, lrecord_token_list, rrecord_token_list,
-        lrecord_index_list, rrecord_index_list, py_cand_set,
-        py_output_size)
-        print('Done {0}, time: {1}'.format(config, time.time()))
-        return tmp
+    lrecord_token_list = pickle.loads(lrecord_token_list)
+    rrecord_token_list = pickle.loads(rrecord_token_list)
+    lrecord_index_list = pickle.loads(lrecord_index_list)
+    rrecord_index_list = pickle.loads(rrecord_index_list)
+
+    print('Trying {0}, time: {1}'.format(config, time.time()))
+    tmp = debugblocker_topk_cython(config, lrecord_token_list, rrecord_token_list,
+    lrecord_index_list, rrecord_index_list, py_cand_set,
+    py_output_size)
+    print('Done {0}, time: {1}'.format(config, time.time()))
+    return tmp
 
 def debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
                         lrecord_index_list, rrecord_index_list,
@@ -224,7 +230,7 @@ def debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
     print sys.getsizeof(ltable_field_token_sum)
     print sys.getsizeof(rtable_field_token_sum)
     print sys.getsizeof(py_cand_set)
-    print "start cloudpickle", time.time()
+    print "original start cloudpickle", time.time()
     cloudpickle.dumps(lrecord_token_list)
     cloudpickle.dumps(rrecord_token_list)
     cloudpickle.dumps(lrecord_index_list)
@@ -232,41 +238,54 @@ def debugblocker_cython_parallel(lrecord_token_list, rrecord_token_list,
     cloudpickle.dumps(ltable_field_token_sum)
     cloudpickle.dumps(rtable_field_token_sum)
     cloudpickle.dumps(py_cand_set)
-    print "end cloudpickle", time.time()
-    '''
+    print "original end cloudpickle", time.time()
     pd_lrecord_token_list = pd.DataFrame(lrecord_token_list)
     pd_rrecord_token_list = pd.DataFrame(rrecord_token_list)
     pd_lrecord_index_list = pd.DataFrame(lrecord_index_list)
     pd_rrecord_index_list = pd.DataFrame(rrecord_index_list)
     pd_ltable_field_token_sum = pd.DataFrame(ltable_field_token_sum)
     pd_rtable_field_token_sum = pd.DataFrame(rtable_field_token_sum)
-    print "start cloudpickle", time.time()
+    print "dataframe start cloudpickle", time.time()
     cloudpickle.dumps(pd_lrecord_token_list)
     cloudpickle.dumps(pd_rrecord_token_list)
     cloudpickle.dumps(pd_lrecord_index_list)
     cloudpickle.dumps(pd_rrecord_index_list)
     cloudpickle.dumps(pd_ltable_field_token_sum)
     cloudpickle.dumps(pd_rtable_field_token_sum)
-    print "end cloudpickle", time.time()
+    print "dataframe end cloudpickle", time.time()
 
-    print "start cloudpickle", time.time()
+    =print "can_set start cloudpickle", time.time()
     cloudpickle.dumps(py_cand_set)
-    print "end cloudpickle", time.time()
+    print "can_set end cloudpickle", time.time()
+    '''
+
+    print "pickle file  start cloudpickle", time.time()
+    lrecord_token_list = pickle.dumps(lrecord_token_list)
+    rrecord_token_list = pickle.dumps(rrecord_token_list)
+    lrecord_index_list = pickle.dumps(lrecord_index_list)
+    rrecord_index_list = pickle.dumps(rrecord_index_list)
+    print "pickle file  end cloudpickle", time.time()
+
     py_config_lists = debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, 
                         py_cand_set, py_num_fields, len(lrecord_token_list), len(rrecord_token_list))
 
     # parallel computer topk based on config lists
+    '''
     rec_lists = []
     with Parallel(n_jobs=4, verbose=50) as parallel:
         rec_lists = parallel(delayed(debugblocker_topk_cython_wrapper)
             (py_config_lists[i], lrecord_token_list, rrecord_token_list,
             lrecord_index_list, rrecord_index_list, py_cand_set,
             py_output_size) for i in range(len(py_config_lists)))
-
-    #rec_lists = Parallel(n_jobs = 8)(delayed(debugblocker_topk_cython_wrapper)
-    #    (py_config_lists[i], lrecord_token_list, rrecord_token_list,
-    #    lrecord_index_list, rrecord_index_list, py_cand_set,
+    '''
+    rec_lists = Parallel(n_jobs = -1, verbose = 50)(delayed(debugblocker_topk_cython_wrapper)
+        (py_config_lists[i], lrecord_token_list, rrecord_token_list,
+        lrecord_index_list, rrecord_index_list, py_cand_set,
+        py_output_size) for i in range(len(py_config_lists)))
+    #rec_lists = Parallel(n_jobs = -1)(delayed(debugblocker_topk_cython_wrapper)
+    #    (py_config_lists[i], py_cand_set,
     #    py_output_size) for i in range(len(py_config_lists)))
+
     #for i in range(len(py_config_lists)):
     #    tmp = debugblocker_topk_cython_wrapper(py_config_lists[i],
     #            lrecord_token_list, rrecord_token_list, lrecord_index_list,
@@ -730,6 +749,11 @@ if __name__ == "__main__":
      cand_set = mg.read_csv_metadata('../datasets/Walmart-Amazon/title_overlap7.csv',
                                     ltable=ltable, rtable=rtable, fk_ltable='ltable_' + lkey,
                                         fk_rtable='rtable_' + rkey, key='_id')
-     output_size = 300
+     #ltable = mg.read_csv_metadata('../datasets/Amazon-Google/tableA.csv', key=lkey)
+     #rtable = mg.read_csv_metadata('../datasets/Amazon-Google/tableB.csv', key=rkey)
+     #cand_set = mg.read_csv_metadata('../candidate_sets/Amazon-Google/overlap/title_overlap3.csv',
+     #                               ltable=ltable, rtable=rtable, fk_ltable='ltable_' + lkey,
+     #                                   fk_rtable='rtable_' + rkey, key='_id')
+     output_size = 1000
      debug_blocker(ltable, rtable, cand_set, output_size)
 
