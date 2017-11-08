@@ -21,9 +21,9 @@ from operator import itemgetter
 #path_b = os.sep.join([datasets_path, 'B.csv'])
 #path_c = os.sep.join([datasets_path, 'C.csv'])
 
-path_a = '../datasets/test/tableA.csv'
-path_b = '../datasets/test/tableB.csv'
-path_c = '../datasets/test/tableC.csv'
+path_a = '../datasets/test/A.csv'
+path_b = '../datasets/test/B.csv'
+path_c = '../datasets/test/C.csv'
 
 class DebugblockerTestCases(unittest.TestCase):
     def test_check_input_field_correspondence_list_1(self):
@@ -62,18 +62,18 @@ class DebugblockerTestCases(unittest.TestCase):
     def test_check_input_field_correspondence_list_7(self):
         A = read_csv_metadata(path_a)
         B = read_csv_metadata(path_b)
-        field_corres_list = [('title', 'title'),
-                             ('id', 'id')]
+        field_corres_list = [('zipcode', 'zipcode'),
+                             ('birth_year', 'birth_year')]
         db._check_input_field_correspondence_list(A, B, field_corres_list)
 
     def test_get_field_correspondence_list_1(self):
-        A = read_csv_metadata(path_a, key='id')
-        B = read_csv_metadata(path_b, key='id')
+        A = read_csv_metadata(path_a, key='ID')
+        B = read_csv_metadata(path_b, key='ID')
         A_key = em.get_key(A)
         B_key = em.get_key(B)
-        expected_list = [('id', 'id'), ('title', 'title'),
-                         ('description', 'description'),
-                         ('manufacture', 'hourly_wage'),
+        expected_list = [('ID', 'ID'), ('name', 'name'),
+                         ('birth_year', 'birth_year'),
+                         ('hourly_wage', 'hourly_wage'),
                          ('address', 'address'),
                          ('zipcode', 'zipcode')]
         attr_corres = None
@@ -148,6 +148,7 @@ class DebugblockerTestCases(unittest.TestCase):
                                 ('ID', 'item_id')]
         self.assertEqual(expected_attr_corres, actual_attr_corres)
 
+    '''
     def test_calc_table_field_length(self):
         
     def test_calc_table_field_token_sum(self):

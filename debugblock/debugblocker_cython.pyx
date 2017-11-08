@@ -110,12 +110,6 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
     py_config_lists = debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, 
                         py_cand_set, py_num_fields, len(lrecord_token_list), len(rrecord_token_list))
 
-    # parallel computer topk based on config lists
-    #rec_lists = Parallel(n_jobs=4, verbose=1, backend="threading")(delayed(debugblocker_topk_cython)(
-    #    py_config_lists[i], lrecord_token_list, rrecord_token_list,
-    #    lrecord_index_list, rrecord_index_list, py_cand_set,
-    #    py_output_size) for i in xrange(len(py_config_lists)))
-
     rec_lists = []
     for i in xrange(len(py_config_lists)):
         rec_lists.append(debugblocker_topk_cython(py_config_lists[i], lrecord_token_list, rrecord_token_list,
@@ -126,6 +120,7 @@ def debugblocker_cython(lrecord_token_list, rrecord_token_list,
     py_rec_list = debugblocker_merge_topk_cython(rec_lists)
     
     return py_rec_list
+
 
 def debugblocker_config_cython(ltable_field_token_sum, rtable_field_token_sum, py_cand_set,
                         py_num_fields, py_ltable_size, py_rtable_size):
@@ -186,21 +181,17 @@ def debugblocker_topk_cython(py_config, lrecord_token_list, rrecord_token_list,
     del lrecord_index_list, rrecord_index_list
     del py_cand_set
 
-    
-
     cdef GenerateRecomLists generator
 
     cdef cmap[cpair[int, int], int] rec_list;
     rec_list = generator.generate_topk_with_config(config, ltoken_vector, rtoken_vector,
                               lindex_vector, rindex_vector, cand_set, output_size);
    
-    print "cystart"
-    #time.sleep(500)
     py_rec_list = []
     for it in rec_list:
         py_rec_list.append([it.first.first, it.first.second, it.second])
-    print "cyend"
     return py_rec_list
+
 
 def debugblocker_merge_topk_cython(py_rec_lists):
     cdef vector[cmap[cpair[int, int], int]] rec_lists
@@ -217,7 +208,6 @@ def debugblocker_merge_topk_cython(py_rec_lists):
 
     return py_rec_list
     
-
         
 cdef void convert_py_list_to_vector_map(py_rec_lists, 
         vector[cmap[cpair[int, int], int]]& rec_lists):
